@@ -30,9 +30,8 @@ class DepositController extends Controller
 
     public function store(StoreDepositRequest $request)
     {
-        // Pour la démo : on utilise l'utilisateur connecté ou le premier utilisateur
         $data = $request->validated();
-        $data['user_id'] = auth()->id() ?? 1;
+        $data['user_id'] = $request->user()->id;
 
         Deposit::create($data);
 

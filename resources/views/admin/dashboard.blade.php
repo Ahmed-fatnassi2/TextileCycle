@@ -6,7 +6,7 @@
 @section('content')
 
     {{-- Cartes statistiques --}}
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
 
         <a href="{{ route('admin.deposit-points.index') }}"
            class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
@@ -46,6 +46,20 @@
             </div>
         </div>
 
+        <a href="{{ route('admin.associations.index') }}" class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+            <div class="flex items-center justify-between">
+                <div><p class="text-gray-500 text-sm">Associations</p><p class="text-3xl font-bold text-emerald-600">{{ \App\Models\Association::count() }}</p><p class="mt-1 text-xs text-amber-700">{{ \App\Models\Association::where('status', \App\Models\Association::STATUS_PENDING)->count() }} en attente</p></div>
+                <span class="text-4xl">🤝</span>
+            </div>
+        </a>
+
+        <a href="{{ route('admin.donations.index') }}" class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+            <div class="flex items-center justify-between">
+                <div><p class="text-gray-500 text-sm">Demandes de dons</p><p class="text-3xl font-bold text-emerald-600">{{ \App\Models\Donation::count() }}</p></div>
+                <span class="text-4xl">🧺</span>
+            </div>
+        </a>
+
         <div class="bg-white p-6 rounded-xl shadow">
             <div class="flex items-center justify-between">
                 <div>
@@ -60,7 +74,7 @@
     </div>
 
     {{-- Raccourcis --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         <a href="{{ route('admin.deposit-points.create') }}"
            class="bg-emerald-600 text-white p-6 rounded-xl shadow hover:bg-emerald-700 transition flex items-center justify-between">
             <span class="text-lg font-semibold">+ Nouveau point de collecte</span>
@@ -71,6 +85,14 @@
            class="bg-gray-800 text-white p-6 rounded-xl shadow hover:bg-gray-900 transition flex items-center justify-between">
             <span class="text-lg font-semibold">+ Enregistrer un dépôt</span>
             <span class="text-3xl">📦</span>
+        </a>
+        <a href="{{ route('admin.associations.index') }}" class="bg-[#e9f1ed] text-slate-950 p-6 rounded-xl shadow hover:bg-emerald-100 transition flex items-center justify-between">
+            <span class="text-lg font-semibold">Examiner les associations</span>
+            <span class="text-3xl">🤝</span>
+        </a>
+        <a href="{{ route('admin.donations.index') }}" class="bg-slate-900 text-white p-6 rounded-xl shadow hover:bg-slate-800 transition flex items-center justify-between">
+            <span class="text-lg font-semibold">Suivre les demandes de dons</span>
+            <span class="text-3xl">🧺</span>
         </a>
     </div>
 

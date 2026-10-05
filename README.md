@@ -1,4 +1,24 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# TexTileCycle
+
+Application Laravel de collecte et de réemploi textile.
+
+## Démarrage
+
+1. Installer PHP 8.2+, Composer, Node.js et npm.
+2. Exécuter `composer run setup` pour installer les dépendances, créer `.env`, générer la clé, appliquer les migrations et compiler les assets.
+3. Exécuter `php artisan serve` puis ouvrir `http://127.0.0.1:8000`.
+
+Pour tester le back office après `php artisan db:seed --class=TunisiaDemoSeeder`, utiliser `admin@textilecycle.test` avec le mot de passe `DemoTunisie2026!`. Trois comptes association de démonstration sont également créés; le même mot de passe fonctionne pour eux. Ces identifiants sont réservés au développement local et doivent être remplacés/supprimés avant tout déploiement.
+
+Pour un compte administrateur personnalisé, renseigner `ADMIN_EMAIL` et `ADMIN_PASSWORD` dans le `.env` local, puis exécuter `php artisan db:seed`. Ces valeurs restent locales et ne doivent pas être commitées.
+
+## Module 4 · Associations et dons
+
+Un membre connecté peut soumettre une demande d’association à `/association/demande`. Elle reste « En attente » jusqu’à son approbation par un administrateur dans `/admin/associations`. Après approbation, le membre peut gérer ses demandes de dons dans `/association/dons`; le lien vers l’association est déterminé côté serveur.
+
+Les routes du back office nécessitent un compte dont le rôle est `admin`. Les migrations ajoutent ce rôle et les tables `associations` et `donations`.
+
+## About Laravel
 
 <p align="center">
 <a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
