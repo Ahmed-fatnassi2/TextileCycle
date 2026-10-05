@@ -10,7 +10,7 @@
             </a>
             <a href="{{ route('deposits.index') }}"
                class="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-emerald-600 transition">
-                Voir les points de collecte
+                Voir les points de collectes
             </a>
         </div>
     </div>
