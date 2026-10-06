@@ -8,10 +8,12 @@
             <a href="{{ route('home') }}" class="transition {{ request()->routeIs('home') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Accueil</a>
             <a href="{{ route('deposits.index') }}" class="transition {{ request()->routeIs('deposits.*') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Points de collecte</a>
             <a href="{{ route('workshops.index') }}" class="transition {{ request()->routeIs('workshops.*') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Ateliers</a>
-            <a href="{{ route('repairs.create') }}" class="transition {{ request()->routeIs('repairs.*') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Demander une réparation</a>
-            <a href="{{ route('admin.dashboard') }}" class="transition hover:text-emerald-800">Admin</a>
+            <a href="{{ route('repairs.create') }}" class="transition {{ request()->routeIs('repairs.create') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Demander une réparation</a>
             @auth
                 <a href="{{ route('repairs.index') }}" class="transition {{ request()->routeIs('repairs.index', 'repairs.show') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Mes réparations</a>
+                @if(auth()->user()->role === 'admin')
+                    <a href="{{ route('admin.dashboard') }}" class="rounded-md bg-emerald-900 px-3 py-1.5 text-white transition hover:bg-emerald-800">Administration</a>
+                @endif
                 @if(auth()->user()->association?->status === \App\Models\Association::STATUS_APPROVED)
                     <a href="{{ route('association.donations.index') }}" class="transition hover:text-emerald-800">Mes demandes de dons</a>
                 @elseif(auth()->user()->association)
