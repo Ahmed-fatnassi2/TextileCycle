@@ -17,10 +17,18 @@ class RepairSeeder extends Seeder
             ['name' => 'Cuir & Fil Bizerte', 'specialty' => 'Maroquinerie', 'address' => '6 Rue de la Corniche, Bizerte', 'phone' => '24 678 901'],
             ['name' => 'Aiguille de Nabeul', 'specialty' => 'Couture', 'address' => '15 Avenue Habib Thameur, Nabeul', 'phone' => '25 789 012'],
             ['name' => 'Atelier Monastir Retouche', 'specialty' => 'Retouche', 'address' => '27 Avenue de la République, Monastir', 'phone' => '26 890 123'],
-        ])->map(fn (array $data) => Workshop::create($data));
+        ])->map(fn (array $data) => Workshop::updateOrCreate(
+            ['name' => $data['name']],
+            $data,
+        ));
 
-        RepairRequest::factory(30)->create([
-            'workshop_id' => fn () => $workshops->random()->id,
-        ]);
+        // Le seeder peut être relancé sans dupliquer les données de démonstration.
+        $workshops->each(function (Workshop $workshop) {
+            if ($workshop->repairRequests()->doesntExist()) {
+                RepairRequest::factory(5)->create([
+                    'workshop_id' => $workshop->id,
+                ]);
+            }
+        });
     }
 }
