@@ -5,6 +5,7 @@
             <span class="text-lg font-bold tracking-wide">TexTileCycle</span>
         </a>
         <nav class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium text-slate-700" aria-label="Navigation principale">
+            <a href="{{ route('products.index') }}" class="transition hover:text-emerald-800">Produits upcyclés</a>
             <a href="{{ route('deposits.index') }}" class="transition hover:text-emerald-800">Collectes</a>
             @auth
                 @if(auth()->user()->association?->status === \App\Models\Association::STATUS_APPROVED)

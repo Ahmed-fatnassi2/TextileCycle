@@ -19,7 +19,7 @@ class UpdateDepositRequest extends FormRequest
             'weight_kg' => 'required|numeric|min:0.1|max:500',
             'status' => 'required|in:Déposé,Trié,Rejeté',
             'state' => 'required|in:Neuf,Bon état,Usé,Déchiré',
-            'deposit_date' => 'required|date|before_or_equal:today',
+            'deposit_date' => 'required|date|after_or_equal:today',
         ];
     }
 }

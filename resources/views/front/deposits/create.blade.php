@@ -41,7 +41,7 @@
 
                 <div class="mb-6">
                     <label class="block text-sm font-medium mb-1">Date *</label>
-                    <input type="date" name="deposit_date" value="{{ old('deposit_date', date('Y-m-d')) }}"
+                    <input type="date" name="deposit_date" min="{{ now()->toDateString() }}" value="{{ old('deposit_date', date('Y-m-d')) }}"
                            class="w-full border rounded-lg px-3 py-2">
                 </div>
 

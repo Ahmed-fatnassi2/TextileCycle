@@ -64,7 +64,7 @@
 
             <div class="mb-6">
                 <label class="block text-sm font-medium mb-1">Date de dépôt *</label>
-                <input type="date" name="deposit_date" value="{{ old('deposit_date', date('Y-m-d')) }}"
+                <input type="date" name="deposit_date" min="{{ now()->toDateString() }}" value="{{ old('deposit_date', date('Y-m-d')) }}"
                        class="w-full border rounded-lg px-3 py-2 @error('deposit_date') border-red-500 @enderror">
                 @error('deposit_date') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
