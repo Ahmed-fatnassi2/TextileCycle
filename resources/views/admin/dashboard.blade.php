@@ -70,7 +70,7 @@
             </div>
         </a>
 
-        <div class="bg-white p-6 rounded-xl shadow">
+        <a href="{{ route('admin.users.index') }}" class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-gray-500 text-sm">Citoyens</p>
@@ -80,7 +80,7 @@
                 </div>
                 <span class="text-4xl">👥</span>
             </div>
-        </div>
+        </a>
     </div>
 
     {{-- Raccourcis --}}

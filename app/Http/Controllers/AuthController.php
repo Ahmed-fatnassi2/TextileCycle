@@ -24,8 +24,12 @@ class AuthController extends Controller
         ]);
 
         $user = User::create($data);
+        User::logActivity($user, 'Inscription', 'Compte créé par le citoyen.', $user);
         Auth::login($user);
         $request->session()->regenerate();
+
+        $request->user()->update(['last_login_at' => now()]);
+        User::logActivity($request->user(), 'Connexion', 'Connexion réussie au compte.', $request->user());
 
         return redirect()->route('associations.create');
     }

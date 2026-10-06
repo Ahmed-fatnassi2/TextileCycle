@@ -17,6 +17,7 @@ class ProfileController extends Controller
     public function update(UpdateProfileRequest $request): RedirectResponse
     {
         $request->user()->update($request->validated());
+        \App\Models\User::logActivity($request->user(), 'Profil modifié', 'Informations du profil mises à jour.', $request->user());
 
         return redirect()->route('profile.edit')->with('success', 'Votre profil a été mis à jour.');
     }

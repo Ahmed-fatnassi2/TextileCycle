@@ -15,6 +15,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WorkshopController;
 use App\Http\Controllers\Admin\WorkshopController as AdminWorkshopController;
 use App\Http\Controllers\Admin\RepairRequestController as AdminRepairRequestController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\UpcycledProductCatalogController;
 use App\Models\UpcycledProduct;
 use Illuminate\Support\Facades\Route;
@@ -85,4 +86,5 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::resource('donations', AdminDonationController::class);
     Route::resource('material-batches', MaterialBatchController::class);
     Route::resource('upcycled-products', UpcycledProductController::class);
+    Route::resource('users', AdminUserController::class)->only(['index', 'show', 'update', 'destroy']);
 });
