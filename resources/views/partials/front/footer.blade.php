@@ -3,5 +3,6 @@
         <a href="{{ route('home') }}" class="font-semibold tracking-wide">TexTileCycle</a>
         <p class="text-sm text-slate-300">Le textile continue, ensemble.</p>
         <a href="{{ route('deposits.index') }}" class="text-sm text-lime-300 underline underline-offset-4 hover:text-lime-200">Trouver une collecte</a>
+        <a href="{{ route('workshops.index') }}" class="text-sm text-lime-300 underline underline-offset-4 hover:text-lime-200">Trouver un atelier</a>
     </div>
 </footer>

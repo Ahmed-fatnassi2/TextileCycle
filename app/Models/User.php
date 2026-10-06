@@ -53,4 +53,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Association::class);
     }
+
+    public function repairRequests()
+    {
+        return $this->hasMany(RepairRequest::class);
+    }
 }

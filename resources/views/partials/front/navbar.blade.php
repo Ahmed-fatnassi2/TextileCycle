@@ -5,8 +5,13 @@
             <span class="text-lg font-bold tracking-wide">TexTileCycle</span>
         </a>
         <nav class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium text-slate-700" aria-label="Navigation principale">
-            <a href="{{ route('deposits.index') }}" class="transition hover:text-emerald-800">Collectes</a>
+            <a href="{{ route('home') }}" class="transition {{ request()->routeIs('home') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Accueil</a>
+            <a href="{{ route('deposits.index') }}" class="transition {{ request()->routeIs('deposits.*') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Points de collecte</a>
+            <a href="{{ route('workshops.index') }}" class="transition {{ request()->routeIs('workshops.*') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Ateliers</a>
+            <a href="{{ route('repairs.create') }}" class="transition {{ request()->routeIs('repairs.*') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Demander une réparation</a>
+            <a href="{{ route('admin.dashboard') }}" class="transition hover:text-emerald-800">Admin</a>
             @auth
+                <a href="{{ route('repairs.index') }}" class="transition {{ request()->routeIs('repairs.index', 'repairs.show') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Mes réparations</a>
                 @if(auth()->user()->association?->status === \App\Models\Association::STATUS_APPROVED)
                     <a href="{{ route('association.donations.index') }}" class="transition hover:text-emerald-800">Mes demandes de dons</a>
                 @elseif(auth()->user()->association)
@@ -14,7 +19,6 @@
                 @else
                     <a href="{{ route('associations.create') }}" class="transition hover:text-emerald-800">Devenir partenaire</a>
                 @endif
-                @if(auth()->user()->role === 'admin')<a href="{{ route('admin.dashboard') }}" class="transition hover:text-emerald-800">Administration</a>@endif
                 <span class="hidden text-slate-400 sm:inline">{{ auth()->user()->name }}</span>
                 <form method="POST" action="{{ route('logout') }}">@csrf<button class="font-semibold text-emerald-900 underline decoration-emerald-300 underline-offset-4">Déconnexion</button></form>
             @else

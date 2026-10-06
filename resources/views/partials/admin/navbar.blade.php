@@ -10,6 +10,8 @@
         <a class="shrink-0" href="{{ route('admin.associations.index') }}">Associations</a>
         <a class="shrink-0" href="{{ route('admin.donations.index') }}">Dons</a>
         <a class="shrink-0" href="{{ route('admin.deposit-points.index') }}">Collectes</a>
+        <a class="shrink-0" href="{{ route('admin.workshops.index') }}">Ateliers</a>
+        <a class="shrink-0" href="{{ route('admin.repair-requests.index') }}">Réparations</a>
         <a class="shrink-0" href="{{ route('home') }}">Site public</a>
     </nav>
 </header>

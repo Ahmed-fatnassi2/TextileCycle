@@ -46,6 +46,16 @@
             </div>
         </div>
 
+        <a href="{{ route('admin.workshops.index') }}" class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+            <div class="flex items-center justify-between"><div><p class="text-gray-500 text-sm">Ateliers</p><p class="text-3xl font-bold text-emerald-600">{{ \App\Models\Workshop::count() }}</p></div><span class="text-4xl">🧵</span></div>
+        </a>
+        <a href="{{ route('admin.repair-requests.index') }}" class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+            <div class="flex items-center justify-between"><div><p class="text-gray-500 text-sm">Réparations</p><p class="text-3xl font-bold text-emerald-600">{{ \App\Models\RepairRequest::count() }}</p></div><span class="text-4xl">🪡</span></div>
+        </a>
+        <a href="{{ route('admin.repair-requests.index', ['status' => \App\Models\RepairRequest::STATUS_PENDING]) }}" class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+            <div class="flex items-center justify-between"><div><p class="text-gray-500 text-sm">Réparations en attente</p><p class="text-3xl font-bold text-emerald-600">{{ \App\Models\RepairRequest::where('status', \App\Models\RepairRequest::STATUS_PENDING)->count() }}</p></div><span class="text-4xl">⏳</span></div>
+        </a>
+
         <a href="{{ route('admin.associations.index') }}" class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
             <div class="flex items-center justify-between">
                 <div><p class="text-gray-500 text-sm">Associations</p><p class="text-3xl font-bold text-emerald-600">{{ \App\Models\Association::count() }}</p><p class="mt-1 text-xs text-amber-700">{{ \App\Models\Association::where('status', \App\Models\Association::STATUS_PENDING)->count() }} en attente</p></div>
