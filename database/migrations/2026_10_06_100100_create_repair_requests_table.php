@@ -13,7 +13,7 @@ return new class extends Migration
             $table->text('item_description');
             $table->enum('problem_type', ['Fermeture éclair', 'Trou', 'Ourlet']);
             $table->decimal('cost', 8, 2)->default(0);
-            $table->enum('status', ['En attente', 'En cours', 'Réparé'])->default('En attente');
+            $table->enum('status', ['En attente', 'Devis proposé', 'Devis accepté', 'Devis refusé', 'En cours', 'Prêt à récupérer', 'Réparé', 'Récupéré'])->default('En attente');
             $table->foreignId('workshop_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
