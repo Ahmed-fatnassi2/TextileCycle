@@ -11,6 +11,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\DepositPointController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\RepairController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WorkshopController;
 use App\Http\Controllers\Admin\WorkshopController as AdminWorkshopController;
 use App\Http\Controllers\Admin\RepairRequestController as AdminRepairRequestController;
@@ -41,6 +42,10 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::post('/deconnexion', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
+Route::middleware('auth')->group(function () {
+    Route::get('/profil', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profil', [ProfileController::class, 'update'])->name('profile.update');
+});
 
 Route::get('/deposits', [DepositController::class, 'index'])->name('deposits.index');
 Route::get('/workshops', [WorkshopController::class, 'index'])->name('workshops.index');
