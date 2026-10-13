@@ -7,9 +7,15 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
+    public const ROLE_USER = 'user';
+    public const ROLE_ADMIN = 'admin';
+    public const ROLE_WORKSHOP_OWNER = 'workshop_owner';
+
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
@@ -22,6 +28,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'last_login_at',
     ];
 
     /**
@@ -43,7 +51,39 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function association(): HasOne
+    {
+        return $this->hasOne(Association::class);
+    }
+
+    public function ownedWorkshops(): HasMany
+    {
+        return $this->hasMany(Workshop::class, 'owner_id');
+    }
+
+    public function repairRequests()
+    {
+        return $this->hasMany(RepairRequest::class);
+    }
+
+    public function activities()
+    {
+        return $this->hasMany(UserActivity::class);
+    }
+
+    public static function logActivity(self $user, string $action, string $description, ?self $actor = null, array $metadata = []): void
+    {
+        UserActivity::create([
+            'user_id' => $user->id,
+            'actor_id' => $actor?->id,
+            'action' => $action,
+            'description' => $description,
+            'metadata' => $metadata ?: null,
+        ]);
     }
 }

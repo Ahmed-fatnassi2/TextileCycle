@@ -1,58 +1,48 @@
-<aside class="w-64 bg-gray-900 text-gray-200 flex flex-col">
-
-    {{-- Logo --}}
-    <div class="h-16 flex items-center justify-center border-b border-gray-700">
-        <a href="{{ route('admin.dashboard') }}" class="text-xl font-bold text-emerald-400">
-            ♻️ TexTileCycle
+<header class="relative z-20 border-b border-slate-200 bg-white">
+    <div class="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-5 py-3 sm:px-8 lg:px-12">
+        <a href="{{ route('home') }}" class="flex items-center gap-3 text-slate-950" aria-label="TexTileCycle, accueil">
+            <span class="grid h-9 w-9 place-items-center bg-emerald-900 text-lg text-lime-200">T</span>
+            <span class="text-lg font-bold tracking-wide">TexTileCycle</span>
         </a>
+        <nav class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium text-slate-700" aria-label="Navigation principale">
+            <a href="{{ route('home') }}" class="transition {{ request()->routeIs('home') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Accueil</a>
+            <a href="{{ route('deposits.index') }}" class="transition {{ request()->routeIs('deposits.*') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Points de collecte</a>
+            <a href="{{ route('workshops.index') }}" class="transition {{ request()->routeIs('workshops.*') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Ateliers</a>
+            @auth
+                @if(auth()->user()->role === \App\Models\User::ROLE_WORKSHOP_OWNER)
+                    <a href="{{ route('workshop-owner.dashboard') }}" class="transition hover:text-emerald-800">Espace atelier</a>
+                @else
+                    <a href="{{ route('repairs.create') }}" class="transition {{ request()->routeIs('repairs.create') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Demander une réparation</a>
+                    <a href="{{ route('repairs.index') }}" class="transition {{ request()->routeIs('repairs.index', 'repairs.show') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Mes réparations</a>
+                    @if(auth()->user()->association?->status === \App\Models\Association::STATUS_APPROVED)
+                        <a href="{{ route('association.donations.index') }}" class="transition hover:text-emerald-800">Mes demandes de dons</a>
+                    @elseif(auth()->user()->association)
+                        <a href="{{ route('association.status') }}" class="transition hover:text-emerald-800">Mon association</a>
+                    @else
+                        <a href="{{ route('associations.create') }}" class="transition hover:text-emerald-800">Devenir partenaire</a>
+                    @endif
+                @endif
+                <details class="relative">
+                    <summary class="flex cursor-pointer list-none items-center gap-2 rounded-full p-1 pr-2 transition hover:bg-slate-100">
+                        <span class="grid h-8 w-8 place-items-center rounded-full bg-emerald-900 text-sm font-bold text-lime-200">{{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}</span>
+                        <span class="hidden max-w-28 truncate sm:inline">{{ auth()->user()->name }}</span>
+                        <span class="text-xs text-slate-400">▾</span>
+                    </summary>
+                    <div class="absolute right-0 mt-2 w-72 overflow-hidden rounded-xl border border-slate-200 bg-white py-2 shadow-xl">
+                        <div class="border-b border-slate-100 px-4 py-3"><p class="font-semibold text-slate-900">{{ auth()->user()->name }}</p><p class="truncate text-xs text-slate-500">{{ auth()->user()->email }}</p></div>
+                        <a href="{{ route('profile.edit') }}" class="mx-2 mt-2 block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-100">👤 Mon profil</a>
+                        @if(auth()->user()->role === 'admin')
+                            <a href="{{ route('admin.dashboard') }}" class="mx-2 block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-100">⚙️ Tableau de bord</a>
+                        @endif
+                        <div class="my-2 border-t border-slate-100"></div>
+                        <form method="POST" action="{{ route('logout') }}">@csrf<button class="mx-2 block w-[calc(100%-1rem)] rounded-lg px-3 py-2 text-left text-sm font-medium text-rose-700 hover:bg-rose-50">Déconnexion</button></form>
+                    </div>
+                </details>
+            @else
+                <a href="{{ route('repairs.create') }}" class="transition {{ request()->routeIs('repairs.create') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Demander une réparation</a>
+                <a href="{{ route('login') }}" class="transition hover:text-emerald-800">Connexion</a>
+                <a href="{{ route('register') }}" class="bg-emerald-900 px-4 py-2 font-semibold text-white transition hover:bg-emerald-800">Créer un compte</a>
+            @endauth
+        </nav>
     </div>
-
-    {{-- Menu --}}
-    <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-
-        {{-- Dashboard --}}
-        <a href="{{ route('admin.dashboard') }}"
-           class="flex items-center px-3 py-2 rounded-lg transition
-                  {{ request()->routeIs('admin.dashboard') ? 'bg-gray-800 text-emerald-400' : 'hover:bg-gray-800' }}">
-            📊 <span class="ml-3">Dashboard</span>
-        </a>
-
-        {{-- Séparateur --}}
-        <div class="text-xs uppercase text-gray-500 px-3 mt-4 mb-1">Module Dépôt</div>
-
-        {{-- Points de collecte --}}
-        <a href="{{ route('admin.deposit-points.index') }}"
-           class="flex items-center px-3 py-2 rounded-lg transition
-                  {{ request()->routeIs('admin.deposit-points.*') ? 'bg-gray-800 text-emerald-400' : 'hover:bg-gray-800' }}">
-            📍 <span class="ml-3">Points de collecte</span>
-        </a>
-
-        {{-- Dépôts --}}
-        <a href="{{ route('admin.deposits.index') }}"
-           class="flex items-center px-3 py-2 rounded-lg transition
-                  {{ request()->routeIs('admin.deposits.*') ? 'bg-gray-800 text-emerald-400' : 'hover:bg-gray-800' }}">
-            📦 <span class="ml-3">Dépôts</span>
-        </a>
-
-        {{-- Séparateur --}}
-        <div class="text-xs uppercase text-gray-500 px-3 mt-4 mb-1">Autres</div>
-
-        {{-- Utilisateurs (placeholder) --}}
-        <a href="#"
-           class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 transition opacity-50 cursor-not-allowed">
-            👥 <span class="ml-3">Utilisateurs</span>
-        </a>
-
-        {{-- Retour au front --}}
-        <a href="{{ url('/') }}"
-           class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 transition mt-4 border-t border-gray-700 pt-4">
-            🌐 <span class="ml-3">Voir le site</span>
-        </a>
-
-    </nav>
-
-    {{-- Bas de sidebar --}}
-    <div class="p-3 border-t border-gray-700 text-xs text-gray-500">
-        v1.0 — Module Dépôt
-    </div>
-</aside>
+</header>

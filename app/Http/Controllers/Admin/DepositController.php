@@ -9,25 +9,32 @@ use App\Models\Deposit;
 use App\Models\DepositPoint;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class DepositController extends Controller
 {
     public function index(Request $request)
     {
+        $filters = $request->validate([
+            'search' => ['nullable', 'string', 'max:255'],
+            'status' => ['nullable', Rule::in(Deposit::statuses())],
+            'deposit_point_id' => ['nullable', 'integer', 'exists:deposit_points,id'],
+        ]);
+
         // Requête avec jointure (eager loading)
         $query = Deposit::with(['user', 'depositPoint']);
 
-        if ($search = $request->input('search')) {
+        if ($search = $filters['search'] ?? null) {
             $query->whereHas('user', function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%");
             });
         }
 
-        if ($status = $request->input('status')) {
+        if ($status = $filters['status'] ?? null) {
             $query->where('status', $status);
         }
 
-        if ($pointId = $request->input('deposit_point_id')) {
+        if ($pointId = $filters['deposit_point_id'] ?? null) {
             $query->where('deposit_point_id', $pointId);
         }
 

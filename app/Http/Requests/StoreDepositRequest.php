@@ -18,7 +18,7 @@ class StoreDepositRequest extends FormRequest
         'weight_kg' => 'required|numeric|min:0.1|max:500',
         'status' => 'required|in:Déposé,Trié,Rejeté',
         'state' => 'required|in:Neuf,Bon état,Usé,Déchiré',
-        'deposit_date' => 'required|date|before_or_equal:today',
+        'deposit_date' => 'required|date|after_or_equal:today',
     ];
 
     // user_id obligatoire seulement pour le back office (admin)
@@ -36,7 +36,7 @@ class StoreDepositRequest extends FormRequest
             'weight_kg.required' => 'Le poids est obligatoire.',
             'weight_kg.numeric' => 'Le poids doit être un nombre.',
             'weight_kg.min' => 'Le poids minimum est 0.1 kg.',
-            'deposit_date.before_or_equal' => 'La date ne peut pas être dans le futur.',
+            'deposit_date.after_or_equal' => 'La date doit être aujourd’hui ou dans le futur.',
         ];
     }
 }
