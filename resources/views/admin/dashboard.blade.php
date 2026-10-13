@@ -83,6 +83,35 @@
         </a>
     </div>
 
+    @php
+        $recentActivities = \App\Models\UserActivity::with(['user', 'actor'])
+            ->latest()
+            ->take(5)
+            ->get();
+    @endphp
+
+    <div class="mb-8 rounded-xl bg-white p-6 shadow">
+        <div class="mb-4 flex items-center justify-between">
+            <h2 class="text-lg font-bold">Activité récente</h2>
+            <a href="{{ route('admin.users.index') }}" class="text-sm text-emerald-600 hover:underline">Voir tous les comptes →</a>
+        </div>
+
+        @forelse($recentActivities as $activity)
+            <div class="flex items-start justify-between gap-4 border-b border-gray-100 py-3 last:border-b-0">
+                <div>
+                    <p class="font-medium text-slate-800">{{ $activity->action }}</p>
+                    <p class="text-sm text-slate-600">{{ $activity->description }}</p>
+                </div>
+                <div class="text-right text-xs text-slate-400">
+                    <p>{{ $activity->user->name ?? 'Utilisateur' }}</p>
+                    <p>{{ $activity->created_at->format('d/m/Y H:i') }}</p>
+                </div>
+            </div>
+        @empty
+            <p class="text-sm text-gray-400">Aucune activité récente.</p>
+        @endforelse
+    </div>
+
     {{-- Raccourcis --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         <a href="{{ route('admin.deposit-points.create') }}"

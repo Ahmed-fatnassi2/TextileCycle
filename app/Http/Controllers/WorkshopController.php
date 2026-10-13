@@ -14,7 +14,10 @@ class WorkshopController extends Controller
 
     public function show(Workshop $workshop)
     {
-        $workshop->load(['repairRequests' => fn ($query) => $query->latest()->take(10)]);
+        if (auth()->user()?->role === 'admin') {
+            $workshop->load(['repairRequests' => fn ($query) => $query->latest()->take(10)]);
+        }
+
         return view('front.workshops.show', compact('workshop'));
     }
 }

@@ -71,4 +71,15 @@ class DepositAuthTest extends TestCase
             ])
             ->assertSessionHasErrors('deposit_date');
     }
+
+    public function test_admin_deposit_list_filters_reject_invalid_values(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $this->actingAs($admin)
+            ->get(route('admin.deposit-points.index', ['state' => 'unknown']))
+            ->assertSessionHasErrors('state');
+
+        $this->get(route('admin.deposits.index', ['status' => 'unknown']))
+            ->assertSessionHasErrors('status');
+    }
 }

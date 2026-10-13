@@ -31,4 +31,11 @@ class RepairRequestCrudTest extends TestCase
     {
         $this->actingAs(User::factory()->admin()->create())->from(route('admin.repair-requests.create'))->post(route('admin.repair-requests.store'), [])->assertRedirect(route('admin.repair-requests.create'))->assertSessionHasErrors(['user_id', 'item_description', 'problem_type', 'cost', 'status', 'workshop_id']);
     }
+
+    public function test_admin_repair_list_filters_reject_invalid_values(): void
+    {
+        $this->actingAs(User::factory()->admin()->create())
+            ->get(route('admin.repair-requests.index', ['status' => 'unknown']))
+            ->assertSessionHasErrors('status');
+    }
 }

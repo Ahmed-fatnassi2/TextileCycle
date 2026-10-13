@@ -11,14 +11,22 @@ use App\Models\User;
 use App\Models\RepairPhoto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\Rule;
 
 class RepairRequestController extends Controller
 {
     public function index(Request $request)
     {
+        $filters = $request->validate([
+            'search' => ['nullable', 'string', 'max:255'],
+            'status' => ['nullable', Rule::in(RepairRequest::statuses())],
+            'problem_type' => ['nullable', Rule::in(RepairRequest::problemTypes())],
+            'workshop_id' => ['nullable', 'integer', 'exists:workshops,id'],
+        ]);
+
         $query = RepairRequest::with(['workshop', 'user']);
-        if ($search = $request->input('search')) { $query->where('item_description', 'like', "%{$search}%"); }
-        foreach (['status', 'problem_type', 'workshop_id'] as $filter) { if ($value = $request->input($filter)) { $query->where($filter, $value); } }
+        if ($search = $filters['search'] ?? null) { $query->where('item_description', 'like', "%{$search}%"); }
+        foreach (['status', 'problem_type', 'workshop_id'] as $filter) { if ($value = $filters[$filter] ?? null) { $query->where($filter, $value); } }
         $repairRequests = $query->latest()->paginate(15)->withQueryString();
         $workshops = Workshop::orderBy('name')->get();
         return view('admin.repair-requests.index', compact('repairRequests', 'workshops'));

@@ -12,6 +12,17 @@ class AssociationDonationTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_association_delete_dialog_is_closed_on_page_load(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $association = Association::factory()->create();
+
+        $response = $this->actingAs($admin)->get(route('admin.associations.show', $association));
+
+        $response->assertOk()->assertSee('association-delete-dialog');
+        $this->assertDoesNotMatchRegularExpression('/<dialog\b[^>]*\bopen(?:\s|>)/', $response->getContent());
+    }
+
     public function test_member_can_request_an_association_profile_pending_review(): void
     {
         $response = $this->post(route('register.store'), [

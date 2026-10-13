@@ -89,6 +89,20 @@ class TransformationUpcyclingTest extends TestCase
         $this->assertDatabaseMissing('upcycled_products', ['id' => $product->id]);
     }
 
+    public function test_quality_grade_only_accepts_uppercase_letters(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $baseData = ['material_type' => 'Coton', 'weight' => 12.5];
+
+        $this->actingAs($admin)->post(route('admin.material-batches.store'), [...$baseData, 'quality_grade' => 'AA'])
+            ->assertRedirect(route('admin.material-batches.index'));
+
+        foreach (['a', 'A1', 'A-', 'A A'] as $invalidQuality) {
+            $this->post(route('admin.material-batches.store'), [...$baseData, 'quality_grade' => $invalidQuality])
+                ->assertSessionHasErrors('quality_grade');
+        }
+    }
+
     public function test_upcycling_seeder_creates_products_for_each_batch(): void
     {
         $this->seed(UpcyclingSeeder::class);

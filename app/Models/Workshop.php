@@ -9,13 +9,18 @@ class Workshop extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'specialty', 'address', 'phone'];
+    protected $fillable = ['name', 'specialty', 'address', 'phone', 'owner_id'];
 
     protected $casts = [];
 
     public function repairRequests()
     {
         return $this->hasMany(RepairRequest::class);
+    }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
     protected static function booted(): void

@@ -13,6 +13,7 @@ use App\Http\Controllers\DepositController;
 use App\Http\Controllers\RepairController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WorkshopController;
+use App\Http\Controllers\WorkshopOwner\RepairRequestController as WorkshopOwnerRepairRequestController;
 use App\Http\Controllers\Admin\WorkshopController as AdminWorkshopController;
 use App\Http\Controllers\Admin\RepairRequestController as AdminRepairRequestController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
@@ -51,12 +52,13 @@ Route::middleware('auth')->group(function () {
 Route::get('/deposits', [DepositController::class, 'index'])->name('deposits.index');
 Route::get('/workshops', [WorkshopController::class, 'index'])->name('workshops.index');
 Route::get('/workshops/{workshop}', [WorkshopController::class, 'show'])->name('workshops.show');
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'repair-customer'])->group(function () {
     Route::get('/repairs', [RepairController::class, 'index'])->name('repairs.index');
     Route::get('/repairs/create', [RepairController::class, 'create'])->name('repairs.create');
     Route::post('/repairs', [RepairController::class, 'store'])->name('repairs.store');
     Route::get('/repairs/{repairRequest}', [RepairController::class, 'show'])->name('repairs.show');
     Route::post('/repairs/{repairRequest}/quote', [RepairController::class, 'respondToQuote'])->name('repairs.quote');
+    Route::post('/repairs/{repairRequest}/pickup', [RepairController::class, 'confirmPickup'])->name('repairs.pickup');
 });
 Route::middleware('auth')->group(function () {
     Route::get('/deposits/create', [DepositController::class, 'create'])->name('deposits.create');
@@ -70,6 +72,14 @@ Route::middleware('auth')->group(function () {
     Route::resource('/association/dons', AssociationDonationController::class)
         ->parameters(['dons' => 'donation'])
         ->names('association.donations');
+});
+
+Route::prefix('atelier')->name('workshop-owner.')->middleware(['auth', 'workshop-owner'])->group(function () {
+    Route::get('/', [WorkshopOwnerRepairRequestController::class, 'dashboard'])->name('dashboard');
+    Route::get('/reparations', [WorkshopOwnerRepairRequestController::class, 'index'])->name('repairs.index');
+    Route::get('/reparations/{repairRequest}', [WorkshopOwnerRepairRequestController::class, 'show'])->name('repairs.show');
+    Route::put('/reparations/{repairRequest}/devis', [WorkshopOwnerRepairRequestController::class, 'quote'])->name('repairs.quote');
+    Route::patch('/reparations/{repairRequest}/statut', [WorkshopOwnerRepairRequestController::class, 'updateStatus'])->name('repairs.status');
 });
 
 // ---------- BACK OFFICE ----------
@@ -86,5 +96,5 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::resource('donations', AdminDonationController::class);
     Route::resource('material-batches', MaterialBatchController::class);
     Route::resource('upcycled-products', UpcycledProductController::class);
-    Route::resource('users', AdminUserController::class)->only(['index', 'show', 'update', 'destroy']);
+    Route::resource('users', AdminUserController::class)->only(['index', 'create', 'store', 'show', 'update', 'destroy']);
 });

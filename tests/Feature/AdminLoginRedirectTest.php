@@ -22,4 +22,18 @@ class AdminLoginRedirectTest extends TestCase
             'password' => 'password',
         ])->assertRedirect(route('admin.dashboard'));
     }
+
+    public function test_workshop_owner_is_redirected_to_their_management_space(): void
+    {
+        $owner = User::factory()->create([
+            'role' => User::ROLE_WORKSHOP_OWNER,
+            'email' => 'atelier@example.test',
+            'password' => 'password',
+        ]);
+
+        $this->post(route('login.store'), [
+            'email' => $owner->email,
+            'password' => 'password',
+        ])->assertRedirect(route('workshop-owner.dashboard'));
+    }
 }

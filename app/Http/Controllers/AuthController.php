@@ -22,6 +22,7 @@ class AuthController extends Controller
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
+        $data['role'] = User::ROLE_USER;
 
         $user = User::create($data);
         User::logActivity($user, 'Inscription', 'Compte créé par le citoyen.', $user);
@@ -54,8 +55,15 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        if ($request->user()->role === 'admin') {
+        $request->user()->update(['last_login_at' => now()]);
+        User::logActivity($request->user(), 'Connexion', 'Connexion réussie au compte.', $request->user());
+
+        if ($request->user()->role === User::ROLE_ADMIN) {
             return redirect()->route('admin.dashboard');
+        }
+
+        if ($request->user()->role === User::ROLE_WORKSHOP_OWNER) {
+            return redirect()->route('workshop-owner.dashboard');
         }
 
         return redirect()->intended(route('home'));
@@ -63,6 +71,9 @@ class AuthController extends Controller
 
     public function logout(Request $request): RedirectResponse
     {
+        $user = $request->user();
+        User::logActivity($user, 'Déconnexion', 'Déconnexion du compte.', $user);
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
