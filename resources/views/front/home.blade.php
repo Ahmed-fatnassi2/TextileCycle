@@ -41,6 +41,37 @@
         </div>
     </section>
 
+    <section class="border-b border-slate-200 bg-white">
+        <div class="mx-auto max-w-7xl px-5 py-14 sm:px-8 lg:px-12">
+            <div class="mb-7 flex flex-wrap items-end justify-between gap-4">
+                <div>
+                    <p class="text-sm font-semibold uppercase tracking-wide text-emerald-800">Transformation & upcycling</p>
+                    <h2 class="mt-2 font-display text-3xl text-slate-950">Des matières transformées, prêtes pour une nouvelle vie.</h2>
+                </div>
+                <a href="{{ route('products.index') }}" class="font-semibold text-emerald-900 underline decoration-emerald-300 underline-offset-4">Voir tous les produits</a>
+            </div>
+
+            @if($featuredProducts->isNotEmpty())
+                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    @foreach($featuredProducts as $product)
+                        <a href="{{ route('products.show', $product) }}" class="flex min-h-40 flex-col justify-between border border-slate-200 p-5 transition hover:border-emerald-700 hover:bg-emerald-50/40">
+                            <div>
+                                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">{{ $product->materialBatch->material_type }} · qualité {{ $product->materialBatch->quality_grade }}</p>
+                                <h3 class="mt-3 text-lg font-semibold text-slate-950">{{ $product->name }}</h3>
+                            </div>
+                            <div class="mt-5 flex items-center justify-between gap-3">
+                                <span class="font-semibold text-emerald-900">{{ number_format((float) $product->price, 2, ',', ' ') }} TND</span>
+                                <span class="text-sm {{ $product->stock > 0 ? 'text-emerald-800' : 'text-slate-500' }}">{{ $product->stock > 0 ? 'Disponible' : 'Épuisé' }}</span>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            @else
+                <p class="border-l-2 border-lime-400 py-2 pl-4 text-slate-600">Les premières créations arrivent bientôt. Le catalogue reste accessible pour suivre les nouveautés.</p>
+            @endif
+        </div>
+    </section>
+
     <section class="bg-[#e9f1ed]">
         <div class="mx-auto flex max-w-7xl flex-col gap-8 px-5 py-14 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-12">
             <div class="max-w-2xl"><p class="text-sm font-semibold uppercase tracking-wide text-emerald-800">Associations partenaires</p><h2 class="mt-3 font-display text-3xl leading-tight text-slate-950 sm:text-4xl">Vos besoins peuvent trouver leur réponse.</h2><p class="mt-3 max-w-xl leading-7 text-slate-700">Créez votre compte, présentez votre association et, après validation, demandez les dons dont votre communauté a besoin.</p></div>

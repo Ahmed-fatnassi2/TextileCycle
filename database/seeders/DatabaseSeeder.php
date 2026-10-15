@@ -12,8 +12,10 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             DepositSeeder::class,
+            RepairSeeder::class,
             AssociationSeeder::class,
             TunisiaDemoSeeder::class,
+            UpcyclingSeeder::class,
         ]);
 
         if (env('ADMIN_EMAIL') && env('ADMIN_PASSWORD')) {

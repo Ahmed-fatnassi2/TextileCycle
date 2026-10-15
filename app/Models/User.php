@@ -45,6 +45,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -52,5 +53,26 @@ class User extends Authenticatable
     public function association(): HasOne
     {
         return $this->hasOne(Association::class);
+    }
+
+    public function repairRequests()
+    {
+        return $this->hasMany(RepairRequest::class);
+    }
+
+    public function activities()
+    {
+        return $this->hasMany(UserActivity::class);
+    }
+
+    public static function logActivity(self $user, string $action, string $description, ?self $actor = null, array $metadata = []): void
+    {
+        UserActivity::create([
+            'user_id' => $user->id,
+            'actor_id' => $actor?->id,
+            'action' => $action,
+            'description' => $description,
+            'metadata' => $metadata ?: null,
+        ]);
     }
 }
