@@ -8,6 +8,7 @@ use App\Http\Controllers\AssociationRequestController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\DepositPointController;
 use App\Http\Controllers\DepositController;
+use App\Http\Controllers\DonationTrackingController;
 use Illuminate\Support\Facades\Route;
 
 // ---------- FRONT OFFICE ----------
@@ -24,6 +25,10 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/deconnexion', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
+Route::get('/dons/suivi/{trackingToken}', [DonationTrackingController::class, 'show'])
+    ->middleware('throttle:60,1')
+    ->name('donations.track');
+
 Route::get('/deposits', [DepositController::class, 'index'])->name('deposits.index');
 Route::middleware('auth')->group(function () {
     Route::get('/deposits/create', [DepositController::class, 'create'])->name('deposits.create');
@@ -31,6 +36,9 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::post('/dons/{donation}/reception', [DonationTrackingController::class, 'confirmReceived'])->name('donations.received');
+    Route::get('/association/dons/{donation}/qr', [DonationTrackingController::class, 'qr'])->name('association.donations.qr');
+    Route::get('/association/dons/{donation}/qr/telecharger', [DonationTrackingController::class, 'downloadQr'])->name('association.donations.qr.download');
     Route::get('/association/demande', [AssociationRequestController::class, 'create'])->name('associations.create');
     Route::post('/association/demande', [AssociationRequestController::class, 'store'])->name('associations.store');
     Route::get('/association/statut', [AssociationRequestController::class, 'status'])->name('association.status');

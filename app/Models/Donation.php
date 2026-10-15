@@ -6,6 +6,8 @@ use Database\Factories\DonationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Donation extends Model
 {
@@ -18,8 +20,19 @@ class Donation extends Model
 
     public const STATUS_DELIVERED = 'Livré';
 
+    public const CATEGORY_CLOTHING = 'Vêtements';
+
+    public const CATEGORY_SHOES = 'Chaussures';
+
+    public const CATEGORY_HOME_LINEN = 'Linge de maison';
+
+    public const CATEGORY_ACCESSORIES = 'Accessoires';
+
+    public const CATEGORY_OTHER = 'Autre';
+
     protected $fillable = [
         'association_id',
+        'category',
         'quantity_items',
         'donation_date',
         'status',
@@ -34,8 +47,38 @@ class Donation extends Model
         return [self::STATUS_PENDING, self::STATUS_VALIDATED, self::STATUS_DELIVERED];
     }
 
+    public static function categories(): array
+    {
+        return [
+            self::CATEGORY_CLOTHING,
+            self::CATEGORY_SHOES,
+            self::CATEGORY_HOME_LINEN,
+            self::CATEGORY_ACCESSORIES,
+            self::CATEGORY_OTHER,
+        ];
+    }
+
     public function association(): BelongsTo
     {
         return $this->belongsTo(Association::class);
+    }
+
+    public function statusHistory(): HasMany
+    {
+        return $this->hasMany(DonationStatusHistory::class);
+    }
+
+    public function trackingReference(): string
+    {
+        return 'TC-'.strtoupper(str_replace('-', '', $this->tracking_token));
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Donation $donation) {
+            $donation->tracking_token ??= (string) Str::uuid();
+            $donation->category ??= self::CATEGORY_CLOTHING;
+            $donation->status ??= self::STATUS_PENDING;
+        });
     }
 }

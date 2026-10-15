@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\NotifyDonationStatusChanged;
+use App\Actions\NotifyModuleAdmins;
 use App\Http\Controllers\Controller;
 use App\Models\Association;
 use App\Models\Donation;
@@ -26,9 +28,10 @@ class DonationController extends Controller
         return view('admin.donations.create', compact('associations'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, NotifyDonationStatusChanged $notifyStatus): RedirectResponse
     {
-        Donation::create($request->validate($this->rules()));
+        $donation = Donation::create($request->validate($this->rules()));
+        $notifyStatus($donation);
 
         return redirect()->route('admin.donations.index')->with('success', 'Don enregistré.');
     }
@@ -47,9 +50,25 @@ class DonationController extends Controller
         return view('admin.donations.edit', compact('donation', 'associations'));
     }
 
-    public function update(Request $request, Donation $donation): RedirectResponse
-    {
+    public function update(
+        Request $request,
+        Donation $donation,
+        NotifyDonationStatusChanged $notifyStatus,
+        NotifyModuleAdmins $notifyAdmins,
+    ): RedirectResponse {
+        $previousStatus = $donation->status;
         $donation->update($request->validate($this->rules()));
+
+        if ($donation->status !== $previousStatus) {
+            $notifyStatus($donation);
+            $notifyAdmins(
+                'Statut de don modifié',
+                $donation->association->name,
+                $donation->status,
+                route('admin.donations.show', $donation),
+                $donation->trackingReference(),
+            );
+        }
 
         return redirect()->route('admin.donations.show', $donation)->with('success', 'Don mis à jour.');
     }
@@ -65,6 +84,7 @@ class DonationController extends Controller
     {
         return [
             'association_id' => ['required', 'exists:associations,id'],
+            'category' => ['sometimes', 'required', Rule::in(Donation::categories())],
             'quantity_items' => ['required', 'integer', 'min:1', 'max:10000'],
             'donation_date' => ['required', 'date'],
             'status' => ['required', Rule::in(Donation::statuses())],

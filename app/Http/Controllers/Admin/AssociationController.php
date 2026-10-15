@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\AssociationStatusNotification;
 use App\Models\Association;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -71,10 +73,15 @@ class AssociationController extends Controller
 
     public function update(Request $request, Association $association): RedirectResponse
     {
+        $originalStatus = $association->status;
         $association->update($request->validate([
             ...$this->profileRules(),
             'status' => ['required', Rule::in(Association::statuses())],
         ]));
+
+        if ($association->status !== $originalStatus) {
+            Mail::to($association->user->email)->queue(new AssociationStatusNotification($association));
+        }
 
         return redirect()->route('admin.associations.show', $association)->with('success', 'Association mise à jour.');
     }
