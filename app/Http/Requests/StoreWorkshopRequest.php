@@ -2,9 +2,13 @@
 
 namespace App\Http\Requests;
 
+<<<<<<< HEAD
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+=======
+use Illuminate\Foundation\Http\FormRequest;
+>>>>>>> origin/Donation/Association-"aziz"
 
 class StoreWorkshopRequest extends FormRequest
 {
@@ -12,6 +16,7 @@ class StoreWorkshopRequest extends FormRequest
 
     public function rules(): array
     {
+<<<<<<< HEAD
         return [
             'name' => 'required|string|max:255|unique:workshops,name',
             'specialty' => 'required|string|max:255',
@@ -23,11 +28,18 @@ class StoreWorkshopRequest extends FormRequest
                 Rule::exists('users', 'id')->where(fn ($query) => $query->where('role', User::ROLE_WORKSHOP_OWNER)),
             ],
         ];
+=======
+        return ['name' => 'required|string|max:255|unique:workshops,name', 'specialty' => 'required|string|max:255', 'address' => 'required|string|max:255', 'phone' => ['required', 'string', 'regex:/^\\d{2} ?\\d{3} ?\\d{3}$/']];
+>>>>>>> origin/Donation/Association-"aziz"
     }
 
     public function messages(): array
     {
+<<<<<<< HEAD
         return ['name.required' => 'Le nom est obligatoire.', 'name.string' => 'Le nom doit être du texte.', 'name.max' => 'Le nom ne peut pas dépasser 255 caractères.', 'name.unique' => 'Cet atelier existe déjà.', 'specialty.required' => 'La spécialité est obligatoire.', 'specialty.string' => 'La spécialité doit être du texte.', 'specialty.max' => 'La spécialité ne peut pas dépasser 255 caractères.', 'address.required' => "L'adresse est obligatoire.", 'address.string' => "L'adresse doit être du texte.", 'address.max' => "L'adresse ne peut pas dépasser 255 caractères.", 'phone.required' => 'Le téléphone est obligatoire.', 'phone.string' => 'Le téléphone doit être du texte.', 'phone.regex' => 'Le téléphone doit contenir 8 chiffres, espaces autorisés.', 'owner_id.exists' => 'Sélectionnez un compte propriétaire d’atelier valide.'];
+=======
+        return ['name.required' => 'Le nom est obligatoire.', 'name.string' => 'Le nom doit être du texte.', 'name.max' => 'Le nom ne peut pas dépasser 255 caractères.', 'name.unique' => 'Cet atelier existe déjà.', 'specialty.required' => 'La spécialité est obligatoire.', 'specialty.string' => 'La spécialité doit être du texte.', 'specialty.max' => 'La spécialité ne peut pas dépasser 255 caractères.', 'address.required' => "L'adresse est obligatoire.", 'address.string' => "L'adresse doit être du texte.", 'address.max' => "L'adresse ne peut pas dépasser 255 caractères.", 'phone.required' => 'Le téléphone est obligatoire.', 'phone.string' => 'Le téléphone doit être du texte.', 'phone.regex' => 'Le téléphone doit contenir 8 chiffres, espaces autorisés.'];
+>>>>>>> origin/Donation/Association-"aziz"
     }
 
     public function attributes(): array { return ['name' => 'nom', 'specialty' => 'spécialité', 'address' => 'adresse', 'phone' => 'téléphone']; }

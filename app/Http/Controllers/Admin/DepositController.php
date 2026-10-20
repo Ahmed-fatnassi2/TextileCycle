@@ -9,12 +9,16 @@ use App\Models\Deposit;
 use App\Models\DepositPoint;
 use App\Models\User;
 use Illuminate\Http\Request;
+<<<<<<< HEAD
 use Illuminate\Validation\Rule;
+=======
+>>>>>>> origin/Donation/Association-"aziz"
 
 class DepositController extends Controller
 {
     public function index(Request $request)
     {
+<<<<<<< HEAD
         $filters = $request->validate([
             'search' => ['nullable', 'string', 'max:255'],
             'status' => ['nullable', Rule::in(Deposit::statuses())],
@@ -25,16 +29,30 @@ class DepositController extends Controller
         $query = Deposit::with(['user', 'depositPoint']);
 
         if ($search = $filters['search'] ?? null) {
+=======
+        // Requête avec jointure (eager loading)
+        $query = Deposit::with(['user', 'depositPoint']);
+
+        if ($search = $request->input('search')) {
+>>>>>>> origin/Donation/Association-"aziz"
             $query->whereHas('user', function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%");
             });
         }
 
+<<<<<<< HEAD
         if ($status = $filters['status'] ?? null) {
             $query->where('status', $status);
         }
 
         if ($pointId = $filters['deposit_point_id'] ?? null) {
+=======
+        if ($status = $request->input('status')) {
+            $query->where('status', $status);
+        }
+
+        if ($pointId = $request->input('deposit_point_id')) {
+>>>>>>> origin/Donation/Association-"aziz"
             $query->where('deposit_point_id', $pointId);
         }
 

@@ -11,12 +11,21 @@
 </div>
 
 <div class="mb-6">
+<<<<<<< HEAD
     <label for="quality_grade" class="mb-1 block text-sm font-medium">Qualité (lettres majuscules uniquement) *</label>
     <input id="quality_grade" type="text" name="quality_grade" value="{{ old('quality_grade', $materialBatch->quality_grade ?? '') }}" required maxlength="10" pattern="[A-Z]+" title="Utilisez uniquement des lettres majuscules." oninput="this.value = this.value.toUpperCase().replace(/[^A-Z]/g, '')" class="w-full rounded-lg border px-3 py-2 uppercase @error('quality_grade') border-red-500 @enderror">
+=======
+    <label for="quality_grade" class="mb-1 block text-sm font-medium">Qualité (ex. A, B, C) *</label>
+    <input id="quality_grade" type="text" name="quality_grade" value="{{ old('quality_grade', $materialBatch->quality_grade ?? '') }}" required maxlength="255" class="w-full rounded-lg border px-3 py-2 @error('quality_grade') border-red-500 @enderror">
+>>>>>>> origin/Donation/Association-"aziz"
     @error('quality_grade') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
 </div>
 
 <div class="flex gap-3">
     <button class="rounded-lg bg-emerald-600 px-5 py-2 text-white hover:bg-emerald-700">{{ $submitLabel }}</button>
     <a href="{{ route('admin.material-batches.index') }}" class="rounded-lg border px-5 py-2 hover:bg-gray-50">Annuler</a>
+<<<<<<< HEAD
 </div>
+=======
+</div>
+>>>>>>> origin/Donation/Association-"aziz"

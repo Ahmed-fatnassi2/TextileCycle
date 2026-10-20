@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+<<<<<<< HEAD
+=======
+use App\Actions\NotifyDonationStatusChanged;
+use App\Actions\NotifyModuleAdmins;
+>>>>>>> origin/Donation/Association-"aziz"
 use App\Http\Controllers\Controller;
 use App\Models\Association;
 use App\Models\Donation;
@@ -26,9 +31,16 @@ class DonationController extends Controller
         return view('admin.donations.create', compact('associations'));
     }
 
+<<<<<<< HEAD
     public function store(Request $request): RedirectResponse
     {
         Donation::create($request->validate($this->rules()));
+=======
+    public function store(Request $request, NotifyDonationStatusChanged $notifyStatus): RedirectResponse
+    {
+        $donation = Donation::create($request->validate($this->rules()));
+        $notifyStatus($donation);
+>>>>>>> origin/Donation/Association-"aziz"
 
         return redirect()->route('admin.donations.index')->with('success', 'Don enregistré.');
     }
@@ -47,10 +59,33 @@ class DonationController extends Controller
         return view('admin.donations.edit', compact('donation', 'associations'));
     }
 
+<<<<<<< HEAD
     public function update(Request $request, Donation $donation): RedirectResponse
     {
         $donation->update($request->validate($this->rules()));
 
+=======
+    public function update(
+        Request $request,
+        Donation $donation,
+        NotifyDonationStatusChanged $notifyStatus,
+        NotifyModuleAdmins $notifyAdmins,
+    ): RedirectResponse {
+        $previousStatus = $donation->status;
+        $donation->update($request->validate($this->rules()));
+
+        if ($donation->status !== $previousStatus) {
+            $notifyStatus($donation);
+            $notifyAdmins(
+                'Statut de don modifié',
+                $donation->association->name,
+                $donation->status,
+                route('admin.donations.show', $donation),
+                $donation->trackingReference(),
+            );
+        }
+
+>>>>>>> origin/Donation/Association-"aziz"
         return redirect()->route('admin.donations.show', $donation)->with('success', 'Don mis à jour.');
     }
 
@@ -65,9 +100,17 @@ class DonationController extends Controller
     {
         return [
             'association_id' => ['required', 'exists:associations,id'],
+<<<<<<< HEAD
+=======
+            'category' => ['sometimes', 'required', Rule::in(Donation::categories())],
+>>>>>>> origin/Donation/Association-"aziz"
             'quantity_items' => ['required', 'integer', 'min:1', 'max:10000'],
             'donation_date' => ['required', 'date'],
             'status' => ['required', Rule::in(Donation::statuses())],
         ];
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/Donation/Association-"aziz"

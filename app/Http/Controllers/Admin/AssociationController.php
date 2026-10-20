@@ -3,10 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+<<<<<<< HEAD
+=======
+use App\Mail\AssociationStatusNotification;
+>>>>>>> origin/Donation/Association-"aziz"
 use App\Models\Association;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+<<<<<<< HEAD
+=======
+use Illuminate\Support\Facades\Mail;
+>>>>>>> origin/Donation/Association-"aziz"
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -71,11 +79,22 @@ class AssociationController extends Controller
 
     public function update(Request $request, Association $association): RedirectResponse
     {
+<<<<<<< HEAD
+=======
+        $originalStatus = $association->status;
+>>>>>>> origin/Donation/Association-"aziz"
         $association->update($request->validate([
             ...$this->profileRules(),
             'status' => ['required', Rule::in(Association::statuses())],
         ]));
 
+<<<<<<< HEAD
+=======
+        if ($association->status !== $originalStatus) {
+            Mail::to($association->user->email)->queue(new AssociationStatusNotification($association));
+        }
+
+>>>>>>> origin/Donation/Association-"aziz"
         return redirect()->route('admin.associations.show', $association)->with('success', 'Association mise à jour.');
     }
 
@@ -95,4 +114,8 @@ class AssociationController extends Controller
             'needs_description' => ['required', 'string', 'max:5000'],
         ];
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/Donation/Association-"aziz"

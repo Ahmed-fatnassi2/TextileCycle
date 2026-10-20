@@ -83,6 +83,7 @@
         </a>
     </div>
 
+<<<<<<< HEAD
     @php
         $recentActivities = \App\Models\UserActivity::with(['user', 'actor'])
             ->latest()
@@ -112,6 +113,8 @@
         @endforelse
     </div>
 
+=======
+>>>>>>> origin/Donation/Association-"aziz"
     {{-- Raccourcis --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         <a href="{{ route('admin.deposit-points.create') }}"

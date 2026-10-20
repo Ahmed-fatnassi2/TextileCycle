@@ -7,15 +7,21 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+<<<<<<< HEAD
 use Illuminate\Database\Eloquent\Relations\HasMany;
+=======
+>>>>>>> origin/Donation/Association-"aziz"
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
+<<<<<<< HEAD
     public const ROLE_USER = 'user';
     public const ROLE_ADMIN = 'admin';
     public const ROLE_WORKSHOP_OWNER = 'workshop_owner';
 
+=======
+>>>>>>> origin/Donation/Association-"aziz"
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
@@ -29,7 +35,10 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+<<<<<<< HEAD
         'last_login_at',
+=======
+>>>>>>> origin/Donation/Association-"aziz"
     ];
 
     /**
@@ -61,11 +70,14 @@ class User extends Authenticatable
         return $this->hasOne(Association::class);
     }
 
+<<<<<<< HEAD
     public function ownedWorkshops(): HasMany
     {
         return $this->hasMany(Workshop::class, 'owner_id');
     }
 
+=======
+>>>>>>> origin/Donation/Association-"aziz"
     public function repairRequests()
     {
         return $this->hasMany(RepairRequest::class);

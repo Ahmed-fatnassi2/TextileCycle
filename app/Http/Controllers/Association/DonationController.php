@@ -2,11 +2,20 @@
 
 namespace App\Http\Controllers\Association;
 
+<<<<<<< HEAD
+=======
+use App\Actions\NotifyDonationStatusChanged;
+use App\Actions\NotifyModuleAdmins;
+>>>>>>> origin/Donation/Association-"aziz"
 use App\Http\Controllers\Controller;
 use App\Models\Association;
 use App\Models\Donation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+<<<<<<< HEAD
+=======
+use Illuminate\Validation\Rule;
+>>>>>>> origin/Donation/Association-"aziz"
 use Illuminate\View\View;
 
 class DonationController extends Controller
@@ -26,10 +35,28 @@ class DonationController extends Controller
         return view('front.donations.create');
     }
 
+<<<<<<< HEAD
     public function store(Request $request): RedirectResponse
     {
         $association = $this->approvedAssociation($request);
         $association->donations()->create($this->validatedData($request));
+=======
+    public function store(
+        Request $request,
+        NotifyDonationStatusChanged $notifyStatus,
+        NotifyModuleAdmins $notifyAdmins,
+    ): RedirectResponse {
+        $association = $this->approvedAssociation($request);
+        $donation = $association->donations()->create($this->validatedData($request));
+        $notifyStatus($donation);
+        $notifyAdmins(
+            'Nouvelle demande de don',
+            $association->name,
+            $donation->status,
+            route('admin.donations.show', $donation),
+            $donation->trackingReference(),
+        );
+>>>>>>> origin/Donation/Association-"aziz"
 
         return redirect()->route('association.donations.index')->with('success', 'Votre demande de don a été enregistrée.');
     }
@@ -38,6 +65,10 @@ class DonationController extends Controller
     {
         $association = $this->approvedAssociation($request);
         abort_unless($donation->association_id === $association->id, 404);
+<<<<<<< HEAD
+=======
+        $donation->load('statusHistory.actor');
+>>>>>>> origin/Donation/Association-"aziz"
 
         return view('front.donations.show', compact('donation'));
     }
@@ -84,8 +115,16 @@ class DonationController extends Controller
     private function validatedData(Request $request): array
     {
         return $request->validate([
+<<<<<<< HEAD
+=======
+            'category' => ['sometimes', 'required', 'string', Rule::in(Donation::categories())],
+>>>>>>> origin/Donation/Association-"aziz"
             'quantity_items' => ['required', 'integer', 'min:1', 'max:10000'],
             'donation_date' => ['required', 'date', 'after_or_equal:today'],
         ]);
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/Donation/Association-"aziz"

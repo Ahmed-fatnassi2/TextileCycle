@@ -12,9 +12,12 @@
     --font-display: 'DM Serif Display', Georgia, serif;
     --color-coral-500: #e76850;
 }
+<<<<<<< HEAD
 
 @layer components {
     .association-delete-dialog[open] {
         display: grid;
     }
 }
+=======
+>>>>>>> origin/Donation/Association-"aziz"

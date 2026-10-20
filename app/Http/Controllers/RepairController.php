@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRepairRequestRequest;
 use App\Models\RepairRequest;
+<<<<<<< HEAD
 use App\Models\User;
+=======
+>>>>>>> origin/Donation/Association-"aziz"
 use App\Models\Workshop;
 use App\Models\RepairPhoto;
 use Illuminate\Http\RedirectResponse;
@@ -49,6 +52,7 @@ class RepairController extends Controller
         abort_unless($repairRequest->status === RepairRequest::STATUS_QUOTE_PROPOSED, 422);
         $decision = $request->validate(['decision' => 'required|in:accept,refuse'])['decision'];
         $repairRequest->update(['status' => $decision === 'accept' ? RepairRequest::STATUS_QUOTE_ACCEPTED : RepairRequest::STATUS_QUOTE_REFUSED]);
+<<<<<<< HEAD
         User::logActivity(
             $request->user(),
             $decision === 'accept' ? 'Devis accepté' : 'Devis refusé',
@@ -70,6 +74,11 @@ class RepairController extends Controller
         return redirect()->route('repairs.show', $repairRequest)->with('success', 'Le retrait de votre réparation a été confirmé.');
     }
 
+=======
+        return back()->with('success', $decision === 'accept' ? 'Devis accepté. L’atelier peut commencer la réparation.' : 'Devis refusé. L’atelier en a été informé.');
+    }
+
+>>>>>>> origin/Donation/Association-"aziz"
     private function storePhotos(Request $request, RepairRequest $repairRequest, string $field, string $type): void
     {
         foreach ($request->file($field, []) as $photo) {

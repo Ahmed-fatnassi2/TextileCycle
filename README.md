@@ -6,7 +6,11 @@ Application Laravel de collecte et de réemploi textile.
 
 1. Installer PHP 8.2+, Composer, Node.js et npm.
 2. Exécuter `composer run setup` pour installer les dépendances, créer `.env`, générer la clé, appliquer les migrations et compiler les assets.
+<<<<<<< HEAD
 3. Exécuter `php artisan serve` puis ouvrir `http://127.0.0.1:8000`.
+=======
+3. Pour utiliser les QR Codes depuis un téléphone sur le même Wi-Fi, définir `APP_URL` et `DONATION_QR_BASE_URL` sur l’adresse IPv4 du PC avec le port `8000`, démarrer `php artisan serve --host=0.0.0.0`, puis ouvrir cette adresse depuis le téléphone.
+>>>>>>> origin/Donation/Association-"aziz"
 
 Pour tester le back office après `php artisan db:seed --class=TunisiaDemoSeeder`, utiliser `admin@textilecycle.test` avec le mot de passe `DemoTunisie2026!`. Trois comptes association de démonstration sont également créés; le même mot de passe fonctionne pour eux. Ces identifiants sont réservés au développement local et doivent être remplacés/supprimés avant tout déploiement.
 
@@ -18,6 +22,29 @@ Un membre connecté peut soumettre une demande d’association à `/association/
 
 Les routes du back office nécessitent un compte dont le rôle est `admin`. Les migrations ajoutent ce rôle et les tables `associations` et `donations`.
 
+<<<<<<< HEAD
+=======
+Les dons disposent d’une catégorie, d’une référence de suivi aléatoire et d’un historique de statuts. Après validation, leur page de détail affiche un QR Code qui ouvre directement une fiche de suivi autonome, lisible sur téléphone sans connexion ni navigation dans l’application. Toute personne disposant du QR peut consulter les informations de suivi, mais la fiche n’affiche pas de coordonnées personnelles ni d’actions de modification. La confirmation « Livré » reste réservée à l’association liée ou à un administrateur connecté; scanner le code ne change jamais le statut.
+
+Une nouvelle demande d’association ou de don envoie une notification aux administrateurs configurés (rôle `admin`). Le demandeur reçoit la confirmation de soumission; le compte lié à l’association et les administrateurs sont avertis lors des changements de statut de don. L’utilisateur demandeur est averti lorsque l’administrateur accepte ou refuse une association. Ces e-mails sont envoyés en file d’attente.
+
+En développement, `MAIL_MAILER=log` écrit les messages dans les logs Laravel et ne les envoie pas sur Internet. Pour Gmail, activer la validation en deux étapes sur le compte, créer un mot de passe d’application Google, puis renseigner localement dans `.env` :
+
+```dotenv
+MAIL_MAILER=smtp
+MAIL_SCHEME=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=votre-adresse@gmail.com
+MAIL_PASSWORD=votre-mot-de-passe-application
+MAIL_FROM_ADDRESS=votre-adresse@gmail.com
+MAIL_FROM_NAME="TextileCycle"
+QUEUE_CONNECTION=database
+```
+
+Ne jamais utiliser ni commiter le mot de passe Google habituel. Après configuration, exécuter `php artisan config:clear`, puis garder un worker actif dans un autre terminal avec `php artisan queue:work --tries=3`. Les changements sans modification de statut ne renvoient pas d’e-mail. Les erreurs sont visibles dans les logs et les tâches échouées avec `php artisan queue:failed`.
+
+>>>>>>> origin/Donation/Association-"aziz"
 ## About Laravel
 
 <p align="center">

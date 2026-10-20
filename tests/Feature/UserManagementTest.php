@@ -3,7 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+<<<<<<< HEAD
 use App\Models\Workshop;
+=======
+>>>>>>> origin/Donation/Association-"aziz"
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -11,6 +14,7 @@ class UserManagementTest extends TestCase
 {
     use RefreshDatabase;
 
+<<<<<<< HEAD
     public function test_admin_can_create_user_accounts(): void
     {
         $admin = User::factory()->admin()->create();
@@ -41,6 +45,8 @@ class UserManagementTest extends TestCase
         ]);
     }
 
+=======
+>>>>>>> origin/Donation/Association-"aziz"
     public function test_admin_can_manage_users_and_audit_role_changes(): void
     {
         $admin = User::factory()->admin()->create();
@@ -55,6 +61,7 @@ class UserManagementTest extends TestCase
         $this->assertDatabaseHas('user_activities', ['user_id' => $citizen->id, 'actor_id' => $admin->id, 'action' => 'Rôle modifié']);
         $this->get(route('admin.users.show', $citizen))->assertOk()->assertSee('Journal d’activité');
     }
+<<<<<<< HEAD
 
     public function test_admin_user_list_exposes_an_edit_action(): void
     {
@@ -135,4 +142,6 @@ class UserManagementTest extends TestCase
 
         $this->assertDatabaseCount('user_activities', 3);
     }
+=======
+>>>>>>> origin/Donation/Association-"aziz"
 }

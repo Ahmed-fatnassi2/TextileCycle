@@ -7,13 +7,17 @@ use App\Http\Requests\UpdateUserRoleRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+<<<<<<< HEAD
 use Illuminate\Validation\Rule;
+=======
+>>>>>>> origin/Donation/Association-"aziz"
 use Illuminate\View\View;
 
 class UserController extends Controller
 {
     public function index(Request $request): View
     {
+<<<<<<< HEAD
         $filters = $request->validate([
             'search' => ['nullable', 'string', 'max:255'],
             'role' => ['nullable', Rule::in([User::ROLE_USER, User::ROLE_ADMIN, User::ROLE_WORKSHOP_OWNER])],
@@ -24,6 +28,13 @@ class UserController extends Controller
             $query->where(fn ($builder) => $builder->where('name', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%"));
         }
         if ($role = $filters['role'] ?? null) {
+=======
+        $query = User::query()->withCount(['repairRequests', 'activities']);
+        if ($search = $request->input('search')) {
+            $query->where(fn ($builder) => $builder->where('name', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%"));
+        }
+        if ($role = $request->input('role')) {
+>>>>>>> origin/Donation/Association-"aziz"
             $query->where('role', $role);
         }
 
@@ -32,6 +43,7 @@ class UserController extends Controller
         return view('admin.users.index', compact('users'));
     }
 
+<<<<<<< HEAD
     public function create(): View
     {
         return view('admin.users.create');
@@ -52,6 +64,8 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'Utilisateur créé.');
     }
 
+=======
+>>>>>>> origin/Donation/Association-"aziz"
     public function show(User $user): View
     {
         $user->load(['activities' => fn ($query) => $query->with('actor')->latest()->take(30)]);
@@ -62,10 +76,13 @@ class UserController extends Controller
     public function update(UpdateUserRoleRequest $request, User $user): RedirectResponse
     {
         abort_if($user->is($request->user()), 422, 'Vous ne pouvez pas modifier votre propre rôle.');
+<<<<<<< HEAD
         if ($user->ownedWorkshops()->exists() && $request->validated('role') !== User::ROLE_WORKSHOP_OWNER) {
             return back()->withErrors(['role' => 'Désaffectez d’abord ce propriétaire de son atelier.']);
         }
 
+=======
+>>>>>>> origin/Donation/Association-"aziz"
         $oldRole = $user->role;
         $user->update($request->validated());
         User::logActivity($user, 'Rôle modifié', "Rôle modifié de {$oldRole} vers {$user->role} par un administrateur.", $request->user(), ['old_role' => $oldRole, 'new_role' => $user->role]);

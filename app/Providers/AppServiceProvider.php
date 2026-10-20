@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+<<<<<<< HEAD
+=======
+use App\Models\Donation;
+use App\Observers\DonationObserver;
+>>>>>>> origin/Donation/Association-"aziz"
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+<<<<<<< HEAD
         //
+=======
+        Donation::observe(DonationObserver::class);
+>>>>>>> origin/Donation/Association-"aziz"
     }
 }

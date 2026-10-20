@@ -22,7 +22,10 @@ class AuthController extends Controller
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
+<<<<<<< HEAD
         $data['role'] = User::ROLE_USER;
+=======
+>>>>>>> origin/Donation/Association-"aziz"
 
         $user = User::create($data);
         User::logActivity($user, 'Inscription', 'Compte créé par le citoyen.', $user);
@@ -55,6 +58,7 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
+<<<<<<< HEAD
         $request->user()->update(['last_login_at' => now()]);
         User::logActivity($request->user(), 'Connexion', 'Connexion réussie au compte.', $request->user());
 
@@ -66,14 +70,23 @@ class AuthController extends Controller
             return redirect()->route('workshop-owner.dashboard');
         }
 
+=======
+        if ($request->user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+
+>>>>>>> origin/Donation/Association-"aziz"
         return redirect()->intended(route('home'));
     }
 
     public function logout(Request $request): RedirectResponse
     {
+<<<<<<< HEAD
         $user = $request->user();
         User::logActivity($user, 'Déconnexion', 'Déconnexion du compte.', $user);
 
+=======
+>>>>>>> origin/Donation/Association-"aziz"
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

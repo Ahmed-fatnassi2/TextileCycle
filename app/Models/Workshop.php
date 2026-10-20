@@ -9,7 +9,11 @@ class Workshop extends Model
 {
     use HasFactory;
 
+<<<<<<< HEAD
     protected $fillable = ['name', 'specialty', 'address', 'phone', 'owner_id'];
+=======
+    protected $fillable = ['name', 'specialty', 'address', 'phone'];
+>>>>>>> origin/Donation/Association-"aziz"
 
     protected $casts = [];
 
@@ -18,11 +22,14 @@ class Workshop extends Model
         return $this->hasMany(RepairRequest::class);
     }
 
+<<<<<<< HEAD
     public function owner()
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
+=======
+>>>>>>> origin/Donation/Association-"aziz"
     protected static function booted(): void
     {
         static::deleting(function (Workshop $workshop) {

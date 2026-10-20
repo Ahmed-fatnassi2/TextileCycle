@@ -31,6 +31,7 @@ class WorkshopCrudTest extends TestCase
         $this->assertDatabaseMissing('repair_requests', ['id' => $repair->id]);
     }
 
+<<<<<<< HEAD
     public function test_admin_can_assign_one_owner_to_multiple_workshops(): void
     {
         $admin = $this->admin();
@@ -58,10 +59,13 @@ class WorkshopCrudTest extends TestCase
         $this->assertSame(2, $owner->fresh()->ownedWorkshops()->count());
     }
 
+=======
+>>>>>>> origin/Donation/Association-"aziz"
     public function test_invalid_workshop_is_rejected(): void
     {
         $this->actingAs($this->admin())->from(route('admin.workshops.create'))->post(route('admin.workshops.store'), [])->assertRedirect(route('admin.workshops.create'))->assertSessionHasErrors(['name', 'specialty', 'address', 'phone']);
     }
+<<<<<<< HEAD
 
     public function test_admin_workshop_search_rejects_non_string_input(): void
     {
@@ -89,4 +93,6 @@ class WorkshopCrudTest extends TestCase
             ->assertSee('Demandes récentes')
             ->assertSee('Private repair request description');
     }
+=======
+>>>>>>> origin/Donation/Association-"aziz"
 }

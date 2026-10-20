@@ -8,6 +8,10 @@
         @error('association_id')<p class="mt-1 text-sm text-rose-700">{{ $message }}</p>@enderror
     </div>
     <div class="grid gap-5 sm:grid-cols-2">
+<<<<<<< HEAD
+=======
+        <div><label for="category" class="mb-1 block text-sm font-semibold">Catégorie textile *</label><select id="category" name="category" required class="w-full border border-slate-300 px-3 py-2.5">@foreach(\App\Models\Donation::categories() as $category)<option value="{{ $category }}" @selected(old('category', $donation->category ?? \App\Models\Donation::CATEGORY_CLOTHING) === $category)>{{ $category }}</option>@endforeach</select>@error('category')<p class="mt-1 text-sm text-rose-700">{{ $message }}</p>@enderror</div>
+>>>>>>> origin/Donation/Association-"aziz"
         <div><label for="quantity_items" class="mb-1 block text-sm font-semibold">Nombre de pièces *</label><input id="quantity_items" name="quantity_items" type="number" min="1" max="10000" value="{{ old('quantity_items', $donation->quantity_items ?? '') }}" required class="w-full border border-slate-300 px-3 py-2.5">@error('quantity_items')<p class="mt-1 text-sm text-rose-700">{{ $message }}</p>@enderror</div>
         <div><label for="donation_date" class="mb-1 block text-sm font-semibold">Date du don *</label><input id="donation_date" name="donation_date" type="date" value="{{ old('donation_date', isset($donation) ? $donation->donation_date->format('Y-m-d') : now()->format('Y-m-d')) }}" required class="w-full border border-slate-300 px-3 py-2.5">@error('donation_date')<p class="mt-1 text-sm text-rose-700">{{ $message }}</p>@enderror</div>
     </div>

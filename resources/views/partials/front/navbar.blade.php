@@ -8,6 +8,7 @@
             <a href="{{ route('home') }}" class="transition {{ request()->routeIs('home') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Accueil</a>
             <a href="{{ route('deposits.index') }}" class="transition {{ request()->routeIs('deposits.*') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Points de collecte</a>
             <a href="{{ route('workshops.index') }}" class="transition {{ request()->routeIs('workshops.*') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Ateliers</a>
+<<<<<<< HEAD
             @auth
                 @if(auth()->user()->role === \App\Models\User::ROLE_WORKSHOP_OWNER)
                     <a href="{{ route('workshop-owner.dashboard') }}" class="transition hover:text-emerald-800">Espace atelier</a>
@@ -21,6 +22,17 @@
                     @else
                         <a href="{{ route('associations.create') }}" class="transition hover:text-emerald-800">Devenir partenaire</a>
                     @endif
+=======
+            <a href="{{ route('repairs.create') }}" class="transition {{ request()->routeIs('repairs.create') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Demander une réparation</a>
+            @auth
+                <a href="{{ route('repairs.index') }}" class="transition {{ request()->routeIs('repairs.index', 'repairs.show') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Mes réparations</a>
+                @if(auth()->user()->association?->status === \App\Models\Association::STATUS_APPROVED)
+                    <a href="{{ route('association.donations.index') }}" class="transition hover:text-emerald-800">Mes demandes de dons</a>
+                @elseif(auth()->user()->association)
+                    <a href="{{ route('association.status') }}" class="transition hover:text-emerald-800">Mon association</a>
+                @else
+                    <a href="{{ route('associations.create') }}" class="transition hover:text-emerald-800">Devenir partenaire</a>
+>>>>>>> origin/Donation/Association-"aziz"
                 @endif
                 <details class="relative">
                     <summary class="flex cursor-pointer list-none items-center gap-2 rounded-full p-1 pr-2 transition hover:bg-slate-100">
@@ -39,7 +51,10 @@
                     </div>
                 </details>
             @else
+<<<<<<< HEAD
                 <a href="{{ route('repairs.create') }}" class="transition {{ request()->routeIs('repairs.create') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Demander une réparation</a>
+=======
+>>>>>>> origin/Donation/Association-"aziz"
                 <a href="{{ route('login') }}" class="transition hover:text-emerald-800">Connexion</a>
                 <a href="{{ route('register') }}" class="bg-emerald-900 px-4 py-2 font-semibold text-white transition hover:bg-emerald-800">Créer un compte</a>
             @endauth

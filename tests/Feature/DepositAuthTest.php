@@ -71,6 +71,7 @@ class DepositAuthTest extends TestCase
             ])
             ->assertSessionHasErrors('deposit_date');
     }
+<<<<<<< HEAD
 
     public function test_admin_deposit_list_filters_reject_invalid_values(): void
     {
@@ -82,4 +83,6 @@ class DepositAuthTest extends TestCase
         $this->get(route('admin.deposits.index', ['status' => 'unknown']))
             ->assertSessionHasErrors('status');
     }
+=======
+>>>>>>> origin/Donation/Association-"aziz"
 }

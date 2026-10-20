@@ -7,12 +7,16 @@ use App\Http\Requests\StoreDepositPointRequest;
 use App\Http\Requests\UpdateDepositPointRequest;
 use App\Models\DepositPoint;
 use Illuminate\Http\Request;
+<<<<<<< HEAD
 use Illuminate\Validation\Rule;
+=======
+>>>>>>> origin/Donation/Association-"aziz"
 
 class DepositPointController extends Controller
 {
     public function index(Request $request)
     {
+<<<<<<< HEAD
         $filters = $request->validate([
             'search' => ['nullable', 'string', 'max:255'],
             'state' => ['nullable', Rule::in(['Ouvert', 'Plein', 'En maintenance', 'Fermé'])],
@@ -21,13 +25,24 @@ class DepositPointController extends Controller
         $query = DepositPoint::withCount('deposits');
 
         if ($search = $filters['search'] ?? null) {
+=======
+        $query = DepositPoint::withCount('deposits');
+
+        // Recherche
+        if ($search = $request->input('search')) {
+>>>>>>> origin/Donation/Association-"aziz"
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                   ->orWhere('city', 'like', "%{$search}%");
             });
         }
 
+<<<<<<< HEAD
         if ($state = $filters['state'] ?? null) {
+=======
+        // Filtre par état
+        if ($state = $request->input('state')) {
+>>>>>>> origin/Donation/Association-"aziz"
             $query->where('state', $state);
         }
 

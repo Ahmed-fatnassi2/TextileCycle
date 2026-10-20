@@ -89,6 +89,7 @@ class TransformationUpcyclingTest extends TestCase
         $this->assertDatabaseMissing('upcycled_products', ['id' => $product->id]);
     }
 
+<<<<<<< HEAD
     public function test_quality_grade_only_accepts_uppercase_letters(): void
     {
         $admin = User::factory()->admin()->create();
@@ -103,6 +104,8 @@ class TransformationUpcyclingTest extends TestCase
         }
     }
 
+=======
+>>>>>>> origin/Donation/Association-"aziz"
     public function test_upcycling_seeder_creates_products_for_each_batch(): void
     {
         $this->seed(UpcyclingSeeder::class);
@@ -133,4 +136,8 @@ class TransformationUpcyclingTest extends TestCase
             ->assertSee('Pochette cliente')
             ->assertSee('Disponible');
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/Donation/Association-"aziz"

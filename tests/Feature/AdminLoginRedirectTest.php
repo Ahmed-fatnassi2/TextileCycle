@@ -22,6 +22,7 @@ class AdminLoginRedirectTest extends TestCase
             'password' => 'password',
         ])->assertRedirect(route('admin.dashboard'));
     }
+<<<<<<< HEAD
 
     public function test_workshop_owner_is_redirected_to_their_management_space(): void
     {
@@ -36,4 +37,6 @@ class AdminLoginRedirectTest extends TestCase
             'password' => 'password',
         ])->assertRedirect(route('workshop-owner.dashboard'));
     }
+=======
+>>>>>>> origin/Donation/Association-"aziz"
 }
