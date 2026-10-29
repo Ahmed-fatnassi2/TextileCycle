@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: textilecycle
+  namespace: textilecycle
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: textilecycle
+  template:
+    metadata:
+      labels:
+        app: textilecycle
+    spec:
+      containers:
+        - name: app
+          image: ahmedfatnassi2/textilecycle:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef: { name: textilecycle-config }
+            - secretRef:    { name: textilecycle-secret }
+          readinessProbe:
+            httpGet: { path: /up, port: 8000 }
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: { path: /up, port: 8000 }
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            requests: { cpu: "100m", memory: "256Mi" }
+            limits:   { cpu: "500m", memory: "512Mi" }

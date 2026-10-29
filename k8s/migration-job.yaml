@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: textilecycle-migrate
+  namespace: textilecycle
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: migrate
+          image: ahmedfatnassi2/textilecycle:latest
+          command: ["php","artisan","migrate","--force"]
+          envFrom:
+            - configMapRef: { name: textilecycle-config }
+            - secretRef:    { name: textilecycle-secret }
