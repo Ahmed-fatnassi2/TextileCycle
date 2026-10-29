@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: textilecycle-config
+  namespace: textilecycle
+data:
+  APP_ENV: "production"
+  APP_DEBUG: "false"
+  APP_URL: "http://172.17.33.70:30080"
+  APP_NAME: "TextileCycle"
+  LOG_CHANNEL: "stderr"
+  LOG_LEVEL: "warning"
+  DB_CONNECTION: "mysql"
+  DB_HOST: "mysql-service"
+  DB_PORT: "3306"
+  DB_DATABASE: "textilecycle"
+  CACHE_STORE: "file"
+  SESSION_DRIVER: "file"
+  QUEUE_CONNECTION: "sync"

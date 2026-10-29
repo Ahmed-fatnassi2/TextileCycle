@@ -22,3 +22,7 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# DevOps — do not commit real secrets
+k8s/secret.yaml
+devops.txt
