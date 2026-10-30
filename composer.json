@@ -7,6 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "arquivei/laravel-prometheus-exporter": "^6.0",
         "laravel/framework": "^12.0",
         "laravel/octane": "^2.22",
         "laravel/tinker": "^2.10.1"

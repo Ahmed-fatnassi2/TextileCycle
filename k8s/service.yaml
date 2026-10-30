@@ -3,6 +3,10 @@ kind: Service
 metadata:
   name: textilecycle-service
   namespace: textilecycle
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8000"
+    prometheus.io/path: "/metrics"
 spec:
   type: NodePort
   selector:
