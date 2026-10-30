@@ -38,7 +38,8 @@ RUN install-php-extensions \
         gd \
         intl \
         bcmath \
-        opcache
+        opcache \
+        pcntl
 
 WORKDIR /var/www/html
 

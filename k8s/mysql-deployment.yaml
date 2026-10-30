@@ -4,6 +4,7 @@ metadata:
   name: mysql-pvc
   namespace: textilecycle
 spec:
+  storageClassName: local-path
   accessModes: [ReadWriteOnce]
   resources:
     requests:
@@ -42,9 +43,15 @@ spec:
             - name: mysql-data
               mountPath: /var/lib/mysql
           readinessProbe:
-            exec: { command: ["mysqladmin","ping","-h","127.0.0.1","-uroot","-p$(MYSQL_ROOT_PASSWORD)"] }
-            initialDelaySeconds: 20
+            exec:
+              command:
+                - sh
+                - -c
+                - "mysqladmin ping -h 127.0.0.1 -uroot -p${MYSQL_ROOT_PASSWORD} --silent"
+            initialDelaySeconds: 30
             periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
       volumes:
         - name: mysql-data
           persistentVolumeClaim:
