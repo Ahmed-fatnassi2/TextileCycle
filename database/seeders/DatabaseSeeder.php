@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
                     'name' => 'Administrateur TexTileCycle',
                     'password' => Hash::make(env('ADMIN_PASSWORD')),
                     'role' => 'admin',
+                    // 'role' => 'admin',
                 ],
             );
         }
