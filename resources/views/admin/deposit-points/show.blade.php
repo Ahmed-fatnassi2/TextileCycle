@@ -11,9 +11,19 @@
         <dl class="grid grid-cols-2 gap-4 text-sm">
             <div><dt class="text-gray-500">Adresse</dt><dd>{{ $depositPoint->address }}</dd></div>
             <div><dt class="text-gray-500">Ville</dt><dd>{{ $depositPoint->city }}</dd></div>
-            <div><dt class="text-gray-500">Capacité</dt><dd>{{ $depositPoint->capacity }}</dd></div>
+            <div><dt class="text-gray-500">Capacité</dt><dd>{{ $depositPoint->capacity }} kg</dd></div>
             <div><dt class="text-gray-500">État</dt><dd>{{ $depositPoint->state }}</dd></div>
+            <div><dt class="text-gray-500">Coordonnées</dt><dd>{{ $depositPoint->hasCoordinates() ? $depositPoint->latitude.', '.$depositPoint->longitude : 'Non placé sur la carte' }}</dd></div>
         </dl>
+
+        @if($depositPoint->hasCoordinates())
+            <div class="relative isolate mt-6 overflow-hidden rounded-lg border">
+                <div class="h-64 w-full bg-slate-100" data-map="single"
+                     data-point='@json(['lat' => $depositPoint->latitude, 'lng' => $depositPoint->longitude, 'state' => $depositPoint->state])'></div>
+            </div>
+        @else
+            <a href="{{ route('admin.deposit-points.edit', $depositPoint) }}" class="mt-4 inline-block text-sm text-emerald-700 hover:underline">Placer ce point sur la carte →</a>
+        @endif
     </div>
 
     <div class="bg-white rounded-xl shadow p-6">
@@ -49,3 +59,7 @@
     </div>
 
 @endsection
+
+@push('scripts')
+    @vite('resources/js/deposit-map.js')
+@endpush

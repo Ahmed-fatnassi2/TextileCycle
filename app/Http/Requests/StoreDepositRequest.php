@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Deposit;
+use App\Models\DepositPoint;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreDepositRequest extends FormRequest
 {
@@ -12,27 +15,35 @@ class StoreDepositRequest extends FormRequest
     }
 
     public function rules(): array
-{
-    $rules = [
-        'deposit_point_id' => 'required|exists:deposit_points,id',
-        'weight_kg' => 'required|numeric|min:0.1|max:500',
-        'status' => 'required|in:Déposé,Trié,Rejeté',
-        'state' => 'required|in:Neuf,Bon état,Usé,Déchiré',
-        'deposit_date' => 'required|date|after_or_equal:today',
-    ];
+    {
+        $rules = [
+            'deposit_point_id' => 'required|exists:deposit_points,id',
+            'weight_kg' => 'required|numeric|min:0.1|max:500',
+            'state' => ['required', Rule::in(Deposit::states())],
+            'deposit_date' => 'required|date|after_or_equal:today',
+        ];
 
-    // user_id obligatoire seulement pour le back office (admin)
-    if ($this->routeIs('admin.*')) {
-        $rules['user_id'] = 'required|exists:users,id';
+        // Back office uniquement : l'admin choisit le citoyen et le statut.
+        // Côté citoyen, le statut est imposé par le serveur ("En attente").
+        if ($this->routeIs('admin.*')) {
+            $rules['user_id'] = 'required|exists:users,id';
+            $rules['status'] = ['required', Rule::in(Deposit::statuses())];
+        } else {
+            // Un citoyen ne peut réserver que sur un point ouvert.
+            $rules['deposit_point_id'] = [
+                'required',
+                Rule::exists('deposit_points', 'id')->where('state', DepositPoint::STATE_OUVERT),
+            ];
+        }
+
+        return $rules;
     }
-
-    return $rules;
-}
 
     public function messages(): array
     {
         return [
             'deposit_point_id.required' => 'Vous devez sélectionner un point de collecte.',
+            'deposit_point_id.exists' => 'Ce point de collecte n’accepte pas de dépôts pour le moment.',
             'weight_kg.required' => 'Le poids est obligatoire.',
             'weight_kg.numeric' => 'Le poids doit être un nombre.',
             'weight_kg.min' => 'Le poids minimum est 0.1 kg.',

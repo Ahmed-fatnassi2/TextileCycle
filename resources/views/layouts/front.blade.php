@@ -37,6 +37,10 @@
     {{-- Footer --}}
     @include('partials.front.footer')
 
+    {{-- Chatbot assistant de dépôt --}}
+    @include('partials.front.assistant')
+    @vite('resources/js/chat-assistant.js')
+
     @stack('scripts')
 </body>
 </html>

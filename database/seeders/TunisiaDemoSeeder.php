@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Association;
+use App\Models\Deposit;
 use App\Models\DepositPoint;
 use App\Models\Donation;
 use App\Models\User;
@@ -13,7 +14,7 @@ class TunisiaDemoSeeder extends Seeder
 {
     public function run(): void
     {
-        User::firstOrCreate(
+        $admin = User::firstOrCreate(
             ['email' => 'admin@textilecycle.test'],
             [
                 'name' => 'Admin de démonstration',
@@ -23,18 +24,51 @@ class TunisiaDemoSeeder extends Seeder
         );
 
         $points = [
-            ['name' => 'Point textile Tunis Centre', 'address' => '12 Avenue Habib Bourguiba', 'city' => 'Tunis', 'capacity' => 240, 'state' => DepositPoint::STATE_OUVERT],
-            ['name' => 'Point textile La Marsa', 'address' => '8 Rue de la République', 'city' => 'La Marsa', 'capacity' => 160, 'state' => DepositPoint::STATE_OUVERT],
-            ['name' => 'Point solidaire Ariana', 'address' => '21 Avenue de la Liberté', 'city' => 'Ariana', 'capacity' => 180, 'state' => DepositPoint::STATE_OUVERT],
-            ['name' => 'Point textile Sousse', 'address' => '5 Avenue Farhat Hached', 'city' => 'Sousse', 'capacity' => 200, 'state' => DepositPoint::STATE_OUVERT],
-            ['name' => 'Point collecte Sfax', 'address' => '17 Avenue Habib Bourguiba', 'city' => 'Sfax', 'capacity' => 220, 'state' => DepositPoint::STATE_OUVERT],
-            ['name' => 'Point réemploi Monastir', 'address' => '3 Rue de la République', 'city' => 'Monastir', 'capacity' => 120, 'state' => DepositPoint::STATE_PLEIN],
-            ['name' => 'Point textile Bizerte', 'address' => '9 Avenue de la Liberté', 'city' => 'Bizerte', 'capacity' => 150, 'state' => DepositPoint::STATE_OUVERT],
-            ['name' => 'Point solidaire Kairouan', 'address' => '14 Avenue Farhat Hached', 'city' => 'Kairouan', 'capacity' => 130, 'state' => DepositPoint::STATE_OUVERT],
+            ['name' => 'Point textile Tunis Centre', 'address' => '12 Avenue Habib Bourguiba', 'city' => 'Tunis', 'latitude' => 36.7998, 'longitude' => 10.1802, 'capacity' => 240, 'state' => DepositPoint::STATE_OUVERT],
+            ['name' => 'Point textile La Marsa', 'address' => '8 Rue de la République', 'city' => 'La Marsa', 'latitude' => 36.8782, 'longitude' => 10.3247, 'capacity' => 160, 'state' => DepositPoint::STATE_OUVERT],
+            ['name' => 'Point solidaire Ariana', 'address' => '21 Avenue de la Liberté', 'city' => 'Ariana', 'latitude' => 36.8625, 'longitude' => 10.1956, 'capacity' => 180, 'state' => DepositPoint::STATE_OUVERT],
+            ['name' => 'Point textile Sousse', 'address' => '5 Avenue Farhat Hached', 'city' => 'Sousse', 'latitude' => 35.8256, 'longitude' => 10.6360, 'capacity' => 200, 'state' => DepositPoint::STATE_OUVERT],
+            ['name' => 'Point collecte Sfax', 'address' => '17 Avenue Habib Bourguiba', 'city' => 'Sfax', 'latitude' => 34.7400, 'longitude' => 10.7600, 'capacity' => 220, 'state' => DepositPoint::STATE_OUVERT],
+            ['name' => 'Point réemploi Monastir', 'address' => '3 Rue de la République', 'city' => 'Monastir', 'latitude' => 35.7643, 'longitude' => 10.8113, 'capacity' => 120, 'state' => DepositPoint::STATE_PLEIN],
+            ['name' => 'Point textile Bizerte', 'address' => '9 Avenue de la Liberté', 'city' => 'Bizerte', 'latitude' => 37.2744, 'longitude' => 9.8739, 'capacity' => 150, 'state' => DepositPoint::STATE_OUVERT],
+            ['name' => 'Point solidaire Kairouan', 'address' => '14 Avenue Farhat Hached', 'city' => 'Kairouan', 'latitude' => 35.6781, 'longitude' => 10.0963, 'capacity' => 130, 'state' => DepositPoint::STATE_OUVERT],
         ];
 
         foreach ($points as $point) {
             DepositPoint::updateOrCreate(['name' => $point['name']], $point);
+        }
+
+        // Citoyen de démonstration avec un dépôt en attente (QR à scanner) et un dépôt déjà validé
+        $citizen = User::firstOrCreate(
+            ['email' => 'citoyen@textilecycle.test'],
+            [
+                'name' => 'Youssef Mansouri',
+                'password' => Hash::make('DemoTunisie2026!'),
+                'role' => User::ROLE_USER,
+            ],
+        );
+
+        $tunisPoint = DepositPoint::where('name', 'Point textile Tunis Centre')->first();
+
+        if (! $citizen->deposits()->exists()) {
+            Deposit::create([
+                'user_id' => $citizen->id,
+                'deposit_point_id' => $tunisPoint->id,
+                'weight_kg' => 4.5,
+                'state' => Deposit::STATE_BON,
+                'status' => Deposit::STATUS_EN_ATTENTE,
+                'deposit_date' => now()->toDateString(),
+            ]);
+
+            $validated = Deposit::create([
+                'user_id' => $citizen->id,
+                'deposit_point_id' => $tunisPoint->id,
+                'weight_kg' => 7.2,
+                'state' => Deposit::STATE_USE,
+                'status' => Deposit::STATUS_DEPOSE,
+                'deposit_date' => now()->subWeek()->toDateString(),
+            ]);
+            $validated->forceFill(['checked_in_at' => now()->subWeek(), 'checked_in_by' => $admin->id])->save();
         }
 
         $profiles = [

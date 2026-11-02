@@ -17,6 +17,8 @@ class StoreDepositPointRequest extends FormRequest
             'name' => 'required|string|max:255|unique:deposit_points,name',
             'address' => 'required|string|max:255',
             'city' => 'required|string|max:100',
+            'latitude' => 'nullable|numeric|between:-90,90|required_with:longitude',
+            'longitude' => 'nullable|numeric|between:-180,180|required_with:latitude',
             'capacity' => 'required|integer|min:1|max:10000',
             'state' => 'required|in:Ouvert,Plein,En maintenance,Fermé',
         ];

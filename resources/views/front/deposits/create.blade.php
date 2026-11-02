@@ -4,7 +4,11 @@
 
 @section('content')
     <section class="max-w-2xl mx-auto px-4 py-12">
-        <h1 class="text-3xl font-bold mb-6">Déposer un vêtement</h1>
+        <h1 class="text-3xl font-bold mb-2">Déposer un vêtement</h1>
+        <p class="text-gray-600 mb-6">
+            Réservez votre dépôt : vous recevrez un QR code à présenter à l’agent du point de collecte.
+            <a href="{{ route('deposits.index') }}" class="text-emerald-700 hover:underline">Choisir sur la carte</a>
+        </p>
 
         <div class="bg-white rounded-xl shadow p-6">
             <form action="{{ route('deposits.store') }}" method="POST">
@@ -15,7 +19,7 @@
                     <select name="deposit_point_id" class="w-full border rounded-lg px-3 py-2 @error('deposit_point_id') border-red-500 @enderror">
                         <option value="">-- Choisir --</option>
                         @foreach($points as $p)
-                            <option value="{{ $p->id }}" @selected(old('deposit_point_id') == $p->id)>
+                            <option value="{{ $p->id }}" @selected(old('deposit_point_id', $selectedPointId) == $p->id)>
                                 {{ $p->name }} — {{ $p->city }}
                             </option>
                         @endforeach
@@ -45,11 +49,8 @@
                            class="w-full border rounded-lg px-3 py-2">
                 </div>
 
-                {{-- Champs cachés pour la démo --}}
-                <input type="hidden" name="status" value="Déposé">
-
                 <button class="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700">
-                    Enregistrer mon dépôt
+                    Réserver et obtenir mon QR code
                 </button>
             </form>
         </div>

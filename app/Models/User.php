@@ -66,6 +66,11 @@ class User extends Authenticatable
         return $this->hasMany(Workshop::class, 'owner_id');
     }
 
+    public function deposits(): HasMany
+    {
+        return $this->hasMany(Deposit::class);
+    }
+
     public function repairRequests()
     {
         return $this->hasMany(RepairRequest::class);

@@ -30,8 +30,10 @@
                 @error('city') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
 
+            @include('admin.deposit-points._map-picker')
+
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-1">Capacité (nb de vêtements) *</label>
+                <label class="block text-sm font-medium mb-1">Capacité (kg) *</label>
                 <input type="number" name="capacity" value="{{ old('capacity', 100) }}"
                        class="w-full border rounded-lg px-3 py-2 @error('capacity') border-red-500 @enderror">
                 @error('capacity') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror

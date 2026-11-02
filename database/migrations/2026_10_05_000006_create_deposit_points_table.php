@@ -8,6 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Skip on databases that already ran this under its old name (xxxx_create_deposit_points_table).
+        if (Schema::hasTable('deposit_points')) {
+            return;
+        }
+
         Schema::create('deposit_points', function (Blueprint $table) {
             $table->id();
             $table->string('name');

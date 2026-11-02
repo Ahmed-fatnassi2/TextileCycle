@@ -8,6 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Skip on databases that already ran this under its old name (xxxx_create_deposits_table).
+        if (Schema::hasTable('deposits')) {
+            return;
+        }
+
         Schema::create('deposits', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');

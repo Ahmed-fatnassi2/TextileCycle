@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\Admin\DepositCheckinController;
 use App\Http\Controllers\Admin\DepositController as AdminDepositController;
 use App\Http\Controllers\Admin\AssociationController as AdminAssociationController;
 use App\Http\Controllers\Admin\DonationController as AdminDonationController;
 use App\Http\Controllers\Admin\MaterialBatchController;
 use App\Http\Controllers\Admin\UpcycledProductController;
 use App\Http\Controllers\Association\DonationController as AssociationDonationController;
+use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\AssociationRequestController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\DepositPointController;
@@ -49,6 +51,11 @@ Route::middleware('auth')->group(function () {
     Route::put('/profil', [ProfileController::class, 'update'])->name('profile.update');
 });
 
+// Chatbot "assistant de dépôt" (OpenAI). Limité pour maîtriser le coût de l'API.
+Route::post('/assistant/chat', [AssistantController::class, 'chat'])
+    ->middleware('throttle:15,1')
+    ->name('assistant.chat');
+
 Route::get('/deposits', [DepositController::class, 'index'])->name('deposits.index');
 Route::get('/workshops', [WorkshopController::class, 'index'])->name('workshops.index');
 Route::get('/workshops/{workshop}', [WorkshopController::class, 'show'])->name('workshops.show');
@@ -63,6 +70,9 @@ Route::middleware(['auth', 'repair-customer'])->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/deposits/create', [DepositController::class, 'create'])->name('deposits.create');
     Route::post('/deposits', [DepositController::class, 'store'])->name('deposits.store');
+    Route::get('/mes-depots', [DepositController::class, 'mine'])->name('deposits.mine');
+    Route::get('/mes-depots/{deposit}', [DepositController::class, 'show'])->name('deposits.mine.show');
+    Route::get('/mes-depots/{deposit}/qr', [DepositController::class, 'downloadQr'])->name('deposits.mine.qr');
 });
 
 Route::middleware('auth')->group(function () {
@@ -89,6 +99,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     })->name('dashboard');
 
     Route::resource('deposit-points', DepositPointController::class);
+
+    // Validation des dépôts par QR code (déclarées avant la resource pour ne pas être capturées par deposits/{deposit})
+    Route::get('deposits/scan', [DepositCheckinController::class, 'scan'])->name('deposits.scan');
+    Route::get('deposits/lookup', [DepositCheckinController::class, 'lookup'])->name('deposits.lookup');
+    Route::get('deposits/checkin/{code}', [DepositCheckinController::class, 'show'])->name('deposits.checkin');
+    Route::post('deposits/checkin/{code}', [DepositCheckinController::class, 'confirm'])->name('deposits.checkin.confirm');
+
     Route::resource('deposits', AdminDepositController::class);
     Route::resource('workshops', AdminWorkshopController::class);
     Route::resource('repair-requests', AdminRepairRequestController::class);

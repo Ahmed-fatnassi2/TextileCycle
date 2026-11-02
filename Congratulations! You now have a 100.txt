@@ -1,0 +1,73 @@
+**Congratulations!** You now have a 100% fully automated cloud pipeline. Even if you close your laptop, GitHub will talk directly to Azure, and the build will run.
+
+Here is your **"Start-of-Day" Guide** for when you turn your laptop back on and want to work on the project.
+
+---
+
+### ☁️ 1. Wake up Azure (The Server)
+When you shut down your laptop, your Azure VM keeps running (and draining your $100 credit) unless you stop it. 
+
+**If you stopped the VM yesterday:**
+1. Go to the [Azure Portal](https://portal.azure.com/).
+2. Go to **Virtual Machines** -> **`textilecycle-vm2`**.
+3. Click **Start** at the top. Wait 1 minute for it to boot.
+
+**If the Azure VM is running, skip this.**
+
+---
+
+### 💻 2. Connect to the VM (Terminal)
+Open your WSL terminal on your laptop and SSH into the server:
+```bash
+ssh ahmed@68.210.230.98
+```
+*(Enter your password).*
+
+---
+
+### 🔄 3. Restart the Port-Forwards (So you can see SonarQube in your browser)
+When you reboot the Azure VM, the internal network tunnels die. You need to restart them so SonarQube works in your browser.
+
+Run this in your **Azure VM terminal**:
+```bash
+kubectl port-forward -n sonarqube svc/sonarqube-sonarqube 9000:9000 > /tmp/sonar.log 2>&1 &
+```
+*(This runs it in the background).*
+
+---
+
+### 🌐 4. Access SonarQube (Optional)
+If you need to look at SonarQube, open a **new local WSL terminal** (keep the Azure one open) and run:
+```bash
+ssh -L 9001:localhost:9000 ahmed@68.210.230.98
+```
+Then open `http://localhost:9001` in your browser.
+
+---
+
+### 🚀 5. Do your DevOps Work!
+That's it. You are now fully connected to the cloud. 
+
+*   **To push code:** Just `git push` from your laptop. GitHub will trigger Azure Jenkins automatically (no Ngrok needed). 
+*   **To view Jenkins:** `http://68.210.230.98:8080`
+*   **To view your App:** `http://68.210.230.98:30080`
+*   **To view K8s Pods:** Run `kubectl get pods -n textilecycle` in the Azure terminal.
+
+---
+
+### 🛑 6. IMPORTANT: Shutting Down for the Day
+When you are done working and want to close your laptop, **you must stop the VM in Azure** to save your credits.
+
+1. Go to the [Azure Portal](https://portal.azure.com/).
+2. Go to **Virtual Machines** -> **`textilecycle-vm2`**.
+3. Click **Stop** at the top.
+4. **Wait until the status says `Stopped (Deallocated)`.** 
+*(If you just close your laptop without doing this, Azure will drain your $100 credit).*
+
+---
+
+### 🎓 What to show your Jury:
+You have a real cloud setup. If they ask how it works, say:
+*"Our code is hosted on GitHub. When we push, a Webhook triggers Jenkins running on an Azure Virtual Machine. Jenkins runs our tests, scans with SonarQube, builds a Docker image, pushes it to Docker Hub, and then uses `kubectl` to deploy the new version to our Standard Kubernetes cluster, also on Azure. The entire pipeline is independent of our local laptops."*
+
+You did an amazing job! You have a complete, production-grade cloud pipeline. Go get that A! 🎓

@@ -7,13 +7,23 @@
 
     <div class="bg-white rounded-xl shadow p-6 max-w-2xl">
         <dl class="grid grid-cols-2 gap-4 text-sm">
+            <div><dt class="text-gray-500">Code QR</dt><dd class="font-mono">{{ $deposit->code }}</dd></div>
+            <div><dt class="text-gray-500">Validation</dt><dd>
+                @if($deposit->checked_in_at)
+                    {{ $deposit->checked_in_at->format('d/m/Y H:i') }} par {{ $deposit->checkedInBy->name ?? '—' }}
+                @elseif($deposit->isPending())
+                    <a href="{{ route('admin.deposits.checkin', $deposit->code) }}" class="text-amber-700 hover:underline">En attente — valider</a>
+                @else
+                    —
+                @endif
+            </dd></div>
             <div><dt class="text-gray-500">Citoyen</dt><dd>{{ $deposit->user->name ?? '—' }}</dd></div>
             <div><dt class="text-gray-500">Email</dt><dd>{{ $deposit->user->email ?? '—' }}</dd></div>
             <div><dt class="text-gray-500">Point</dt><dd>{{ $deposit->depositPoint->name ?? '—' }}</dd></div>
             <div><dt class="text-gray-500">Ville</dt><dd>{{ $deposit->depositPoint->city ?? '—' }}</dd></div>
             <div><dt class="text-gray-500">Poids</dt><dd>{{ $deposit->weight_kg }} kg</dd></div>
             <div><dt class="text-gray-500">État</dt><dd>{{ $deposit->state }}</dd></div>
-            <div><dt class="text-gray-500">Statut</dt><dd>{{ $deposit->status }}</dd></div>
+            <div><dt class="text-gray-500">Statut</dt><dd><span class="px-2 py-1 rounded text-xs {{ $deposit->statusBadgeClasses() }}">{{ $deposit->status }}</span></dd></div>
             <div><dt class="text-gray-500">Date</dt><dd>{{ $deposit->deposit_date->format('d/m/Y') }}</dd></div>
         </dl>
 

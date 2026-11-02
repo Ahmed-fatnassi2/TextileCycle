@@ -29,6 +29,7 @@
                     <p class="text-3xl font-bold text-emerald-600">
                         {{ \App\Models\Deposit::count() }}
                     </p>
+                    <p class="mt-1 text-xs text-amber-700">{{ \App\Models\Deposit::where('status', \App\Models\Deposit::STATUS_EN_ATTENTE)->count() }} en attente de validation</p>
                 </div>
                 <span class="text-4xl">📦</span>
             </div>
@@ -169,12 +170,7 @@
                         <td class="px-3 py-2">{{ $d->weight_kg }} kg</td>
                         <td class="px-3 py-2">{{ $d->state }}</td>
                         <td class="px-3 py-2">
-                            <span class="px-2 py-1 rounded text-xs
-                                @if($d->status === 'Trié') bg-green-100 text-green-700
-                                @elseif($d->status === 'Rejeté') bg-red-100 text-red-700
-                                @else bg-blue-100 text-blue-700 @endif">
-                                {{ $d->status }}
-                            </span>
+                            <span class="px-2 py-1 rounded text-xs {{ $d->statusBadgeClasses() }}">{{ $d->status }}</span>
                         </td>
                         <td class="px-3 py-2">{{ $d->deposit_date->format('d/m/Y') }}</td>
                     </tr>

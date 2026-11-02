@@ -25,7 +25,7 @@ class DepositAuthTest extends TestCase
             'status' => Deposit::STATUS_DEPOSE,
             'state' => Deposit::STATE_BON,
             'deposit_date' => now()->toDateString(),
-        ])->assertRedirect(route('deposits.index'));
+        ])->assertRedirect(route('deposits.mine.show', Deposit::first()));
 
         $this->assertDatabaseHas('deposits', [
             'user_id' => $user->id,

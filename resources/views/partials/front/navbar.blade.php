@@ -6,7 +6,7 @@
         </a>
         <nav class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium text-slate-700" aria-label="Navigation principale">
             <a href="{{ route('home') }}" class="transition {{ request()->routeIs('home') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Accueil</a>
-            <a href="{{ route('deposits.index') }}" class="transition {{ request()->routeIs('deposits.*') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Points de collecte</a>
+            <a href="{{ route('deposits.index') }}" class="transition {{ request()->routeIs('deposits.index', 'deposits.create') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Points de collecte</a>
             <a href="{{ route('workshops.index') }}" class="transition {{ request()->routeIs('workshops.*') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Ateliers</a>
             @auth
                 @if(auth()->user()->role === \App\Models\User::ROLE_WORKSHOP_OWNER)
@@ -14,6 +14,7 @@
                 @else
                     <a href="{{ route('repairs.create') }}" class="transition {{ request()->routeIs('repairs.create') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Demander une réparation</a>
                     <a href="{{ route('repairs.index') }}" class="transition {{ request()->routeIs('repairs.index', 'repairs.show') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Mes réparations</a>
+                    <a href="{{ route('deposits.mine') }}" class="transition {{ request()->routeIs('deposits.mine*') ? 'text-emerald-800' : 'hover:text-emerald-800' }}">Mes dépôts</a>
                     @if(auth()->user()->association?->status === \App\Models\Association::STATUS_APPROVED)
                         <a href="{{ route('association.donations.index') }}" class="transition hover:text-emerald-800">Mes demandes de dons</a>
                     @elseif(auth()->user()->association)

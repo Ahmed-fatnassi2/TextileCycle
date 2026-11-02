@@ -24,9 +24,11 @@ class DepositController extends Controller
         // Requête avec jointure (eager loading)
         $query = Deposit::with(['user', 'depositPoint']);
 
+        // Recherche par nom du citoyen ou par code QR
         if ($search = $filters['search'] ?? null) {
-            $query->whereHas('user', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user', fn ($u) => $u->where('name', 'like', "%{$search}%"))
+                  ->orWhere('code', 'like', '%'.strtoupper($search).'%');
             });
         }
 
@@ -63,7 +65,7 @@ class DepositController extends Controller
 
     public function show(Deposit $deposit)
     {
-        $deposit->load(['user', 'depositPoint']);
+        $deposit->load(['user', 'depositPoint', 'checkedInBy']);
 
         return view('admin.deposits.show', compact('deposit'));
     }
