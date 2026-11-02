@@ -19,12 +19,12 @@ class UserController extends Controller
             'role' => ['nullable', Rule::in([User::ROLE_USER, User::ROLE_ADMIN, User::ROLE_WORKSHOP_OWNER])],
         ]);
 
-        $query = User::query()->withCount(['repairRequests', 'activities']);
+        $query = User::query()->with('roles')->withCount(['repairRequests', 'activities']);
         if ($search = $filters['search'] ?? null) {
             $query->where(fn ($builder) => $builder->where('name', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%"));
         }
         if ($role = $filters['role'] ?? null) {
-            $query->where('role', $role);
+            $query->role($role); // scope Spatie Permission
         }
 
         $users = $query->latest()->paginate(15)->withQueryString();
@@ -46,7 +46,9 @@ class UserController extends Controller
             'role' => ['required', Rule::in([User::ROLE_USER, User::ROLE_ADMIN, User::ROLE_WORKSHOP_OWNER])],
         ]);
 
+        // Créé par un administrateur : adresse considérée comme vérifiée
         $user = User::create($data);
+        $user->markEmailAsVerified();
         User::logActivity($user, 'Compte créé', 'Compte créé par un administrateur.', $request->user(), ['role' => $user->role]);
 
         return redirect()->route('admin.users.index')->with('success', 'Utilisateur créé.');

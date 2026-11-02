@@ -11,6 +11,8 @@ export default defineConfig({
                 'resources/js/deposit-map.js',
                 'resources/js/qr-scanner.js',
                 'resources/js/chat-assistant.js',
+                'resources/js/donation-calendar.js',
+                'resources/js/upcycling-ideas.js',
             ],
             refresh: true,
         }),

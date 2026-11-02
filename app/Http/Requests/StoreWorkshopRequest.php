@@ -20,7 +20,8 @@ class StoreWorkshopRequest extends FormRequest
             'owner_id' => [
                 'nullable',
                 'integer',
-                Rule::exists('users', 'id')->where(fn ($query) => $query->where('role', User::ROLE_WORKSHOP_OWNER)),
+                // Rôle géré par Spatie : l'utilisateur doit avoir le rôle propriétaire d'atelier
+                Rule::exists('users', 'id')->where(fn ($query) => $query->whereIn('id', User::role(User::ROLE_WORKSHOP_OWNER)->select('users.id')->toBase())),
             ],
         ];
     }

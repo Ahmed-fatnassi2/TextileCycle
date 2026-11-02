@@ -8,6 +8,7 @@ data:
   APP_DEBUG: "false"
   APP_URL: "http://172.17.33.70:30080"
   APP_NAME: "TextileCycle"
+  APP_LOCALE: "fr"
   LOG_CHANNEL: "stderr"
   LOG_LEVEL: "warning"
   DB_CONNECTION: "mysql"

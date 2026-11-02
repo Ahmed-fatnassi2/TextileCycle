@@ -7,7 +7,7 @@
         <div class="mb-10 max-w-md lg:mb-0 lg:pt-10">
             <p class="text-sm font-semibold uppercase tracking-wide text-emerald-800">Rejoindre le réseau</p>
             <h1 class="mt-4 font-display text-4xl leading-tight text-slate-950">Chaque compte peut faire circuler le textile.</h1>
-            <p class="mt-4 leading-7 text-slate-600">Créez votre compte, puis envoyez les informations de votre association pour validation.</p>
+            <p class="mt-4 leading-7 text-slate-600">Créez votre compte, confirmez votre adresse e-mail, puis déposez, faites réparer ou demandez des dons.</p>
         </div>
         <form method="POST" action="{{ route('register.store') }}" class="space-y-5 bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
             @csrf
@@ -24,6 +24,7 @@
             <div>
                 <label for="password" class="mb-1 block text-sm font-semibold text-slate-800">Mot de passe</label>
                 <input id="password" type="password" name="password" required autocomplete="new-password" class="w-full border border-slate-300 px-3 py-2.5 focus:border-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-800/15">
+                <p class="mt-1 text-xs text-slate-500">8 caractères minimum, avec au moins une lettre et un chiffre.</p>
                 @error('password')<p class="mt-1 text-sm text-rose-700">{{ $message }}</p>@enderror
             </div>
             <div>

@@ -16,7 +16,8 @@ class ProfileTest extends TestCase
 
         $this->actingAs($user)->get(route('profile.edit'))->assertOk()->assertSee('Mon profil');
 
-        $this->put(route('profile.update'), [
+        // Mise à jour via Fortify (retour sur le profil)
+        $this->from(route('profile.edit'))->put(route('user-profile-information.update'), [
             'name' => 'Nouveau Nom',
             'email' => 'nouveau@example.test',
         ])->assertRedirect(route('profile.edit'));

@@ -44,10 +44,18 @@ class UserFactory extends Factory
         ]);
     }
 
+    // Le rôle passe par l'attribut "role" du modèle, qui l'enregistre dans Spatie Permission
     public function admin(): static
     {
         return $this->state(fn (array $attributes) => [
-            'role' => 'admin',
+            'role' => User::ROLE_ADMIN,
+        ]);
+    }
+
+    public function workshopOwner(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => User::ROLE_WORKSHOP_OWNER,
         ]);
     }
 }

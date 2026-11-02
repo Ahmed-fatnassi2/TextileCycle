@@ -5,6 +5,12 @@
 </div>
 
 <div class="mb-4">
+    <label for="description" class="mb-1 block text-sm font-medium">Description</label>
+    <textarea id="description" name="description" rows="3" maxlength="2000" class="w-full rounded-lg border px-3 py-2 @error('description') border-red-500 @enderror">{{ old('description', $upcycledProduct->description ?? '') }}</textarea>
+    @error('description') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+</div>
+
+<div class="mb-4">
     <label for="price" class="mb-1 block text-sm font-medium">Prix *</label>
     <input id="price" type="number" name="price" value="{{ old('price', $upcycledProduct->price ?? '') }}" required min="0" step="0.01" class="w-full rounded-lg border px-3 py-2 @error('price') border-red-500 @enderror">
     @error('price') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror

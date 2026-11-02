@@ -19,9 +19,10 @@ class TunisiaDemoSeeder extends Seeder
             [
                 'name' => 'Admin de démonstration',
                 'password' => Hash::make('DemoTunisie2026!'),
-                'role' => 'admin',
+                'role' => User::ROLE_ADMIN,
             ],
         );
+        $this->verify($admin);
 
         $points = [
             ['name' => 'Point textile Tunis Centre', 'address' => '12 Avenue Habib Bourguiba', 'city' => 'Tunis', 'latitude' => 36.7998, 'longitude' => 10.1802, 'capacity' => 240, 'state' => DepositPoint::STATE_OUVERT],
@@ -47,6 +48,7 @@ class TunisiaDemoSeeder extends Seeder
                 'role' => User::ROLE_USER,
             ],
         );
+        $this->verify($citizen);
 
         $tunisPoint = DepositPoint::where('name', 'Point textile Tunis Centre')->first();
 
@@ -109,9 +111,10 @@ class TunisiaDemoSeeder extends Seeder
                 [
                     'name' => $profile['user_name'],
                     'password' => Hash::make('DemoTunisie2026!'),
-                    'role' => 'member',
+                    'role' => User::ROLE_USER,
                 ],
             );
+            $this->verify($user);
 
             $associations[$profile['email']] = Association::updateOrCreate(
                 ['user_id' => $user->id],
@@ -131,15 +134,69 @@ class TunisiaDemoSeeder extends Seeder
             ['association' => 'partenaire.sousse@textilecycle.test', 'quantity_items' => 60, 'donation_date' => '2026-10-25', 'status' => Donation::STATUS_VALIDATED],
         ];
 
-        foreach ($donations as $donation) {
-            Donation::updateOrCreate(
+        // Livraisons à venir, pour que le calendrier ait du contenu (dates relatives à aujourd'hui)
+        $upcoming = [
+            ['association' => 'partenaire.tunis@textilecycle.test', 'quantity_items' => 120, 'in_days' => 2, 'status' => Donation::STATUS_VALIDATED],
+            ['association' => 'partenaire.sousse@textilecycle.test', 'quantity_items' => 75, 'in_days' => 2, 'status' => Donation::STATUS_PENDING],
+            ['association' => 'partenaire.sousse@textilecycle.test', 'quantity_items' => 95, 'in_days' => 6, 'status' => Donation::STATUS_VALIDATED],
+            ['association' => 'partenaire.tunis@textilecycle.test', 'quantity_items' => 55, 'in_days' => 9, 'status' => Donation::STATUS_PENDING],
+        ];
+
+        // Détails de livraison et besoins de chaque association (catégorie, description, adresse)
+        $details = [
+            'partenaire.tunis@textilecycle.test' => ['category' => 'Enfants', 'description' => 'Manteaux, pulls et chaussures 4-12 ans pour les familles accompagnées dans le Grand Tunis.', 'delivery_address' => '15 Rue de Marseille', 'delivery_city' => 'Tunis'],
+            'partenaire.sousse@textilecycle.test' => ['category' => 'Mixte', 'description' => 'Vêtements adultes en bon état et linge de maison pour notre atelier solidaire.', 'delivery_address' => '22 Avenue Léopold Senghor', 'delivery_city' => 'Sousse'],
+            'partenaire.sfax@textilecycle.test' => ['category' => 'Enfants', 'description' => 'Tenues scolaires pour la rentrée des bénéficiaires de Sfax.', 'delivery_address' => '8 Rue Haffouz', 'delivery_city' => 'Sfax'],
+        ];
+
+        foreach ($upcoming as $donation) {
+            $record = Donation::firstOrCreate(
                 [
                     'association_id' => $associations[$donation['association']]->id,
                     'quantity_items' => $donation['quantity_items'],
-                    'donation_date' => $donation['donation_date'],
                 ],
-                ['status' => $donation['status']],
+                [
+                    'donation_date' => now()->addDays($donation['in_days'])->toDateString(),
+                    'status' => $donation['status'],
+                    ...$details[$donation['association']],
+                ],
             );
+            // Demandes créées avant l'ajout de ces champs
+            if (! $record->delivery_address) {
+                $record->update($details[$donation['association']]);
+            }
+        }
+
+        foreach ($donations as $donation) {
+            // whereDate : la colonne est stockée avec l'heure ("2026-10-02 00:00:00"),
+            // une égalité stricte sur la date ne trouvait jamais la ligne et créait un doublon à chaque seed.
+            $existing = Donation::where('association_id', $associations[$donation['association']]->id)
+                ->where('quantity_items', $donation['quantity_items'])
+                ->whereDate('donation_date', $donation['donation_date'])
+                ->first();
+
+            if ($existing) {
+                $existing->update([
+                    'status' => $donation['status'],
+                    ...($existing->delivery_address ? [] : $details[$donation['association']]),
+                ]);
+            } else {
+                Donation::create([
+                    'association_id' => $associations[$donation['association']]->id,
+                    'quantity_items' => $donation['quantity_items'],
+                    'donation_date' => $donation['donation_date'],
+                    'status' => $donation['status'],
+                    ...$details[$donation['association']],
+                ]);
+            }
+        }
+    }
+
+    // Comptes de démonstration : adresse e-mail considérée comme vérifiée
+    private function verify(User $user): void
+    {
+        if (! $user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
         }
     }
 }

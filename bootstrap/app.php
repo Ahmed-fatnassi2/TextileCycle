@@ -3,9 +3,6 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use App\Http\Middleware\EnsureUserIsAdmin;
-use App\Http\Middleware\EnsureUserIsRepairCustomer;
-use App\Http\Middleware\EnsureUserIsWorkshopOwner;
 use Arquivei\LaravelPrometheusExporter\PrometheusLaravelRouteMiddleware; // <-- Correct class name
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -18,10 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
         
         $middleware->append(PrometheusLaravelRouteMiddleware::class); // <-- Correct class name
 
+        // Autorisations côté serveur (Spatie Permission) : "permission:deposits.manage", "role:admin"...
         $middleware->alias([
-            'admin' => EnsureUserIsAdmin::class,
-            'repair-customer' => EnsureUserIsRepairCustomer::class,
-            'workshop-owner' => EnsureUserIsWorkshopOwner::class,
+            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

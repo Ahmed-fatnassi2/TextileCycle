@@ -29,11 +29,10 @@ class UserManagementTest extends TestCase
         ])->assertRedirect(route('admin.users.index'))
             ->assertSessionHas('success');
 
-        $this->assertDatabaseHas('users', [
-            'name' => 'Nouveau citoyen',
-            'email' => 'nouveau@example.test',
-            'role' => 'user',
-        ]);
+        $created = User::where('email', 'nouveau@example.test')->firstOrFail();
+        $this->assertSame('Nouveau citoyen', $created->name);
+        $this->assertTrue($created->hasRole('user'));
+        $this->assertTrue($created->hasVerifiedEmail()); // créé par un admin
         $this->assertDatabaseHas('user_activities', [
             'action' => 'Compte créé',
             'description' => 'Compte créé par un administrateur.',
@@ -51,7 +50,8 @@ class UserManagementTest extends TestCase
         $this->put(route('admin.users.update', $citizen), ['role' => 'admin'])
             ->assertSessionHas('success');
 
-        $this->assertDatabaseHas('users', ['id' => $citizen->id, 'role' => 'admin']);
+        $this->assertTrue($citizen->fresh()->hasRole('admin'));
+        $this->assertFalse($citizen->fresh()->hasRole('user')); // un seul rôle à la fois
         $this->assertDatabaseHas('user_activities', ['user_id' => $citizen->id, 'actor_id' => $admin->id, 'action' => 'Rôle modifié']);
         $this->get(route('admin.users.show', $citizen))->assertOk()->assertSee('Journal d’activité');
     }
@@ -86,7 +86,7 @@ class UserManagementTest extends TestCase
             ->put(route('admin.users.update', $owner), ['role' => User::ROLE_USER])
             ->assertSessionHasErrors('role');
 
-        $this->assertDatabaseHas('users', ['id' => $owner->id, 'role' => User::ROLE_WORKSHOP_OWNER]);
+        $this->assertTrue($owner->fresh()->hasRole(User::ROLE_WORKSHOP_OWNER));
     }
 
     public function test_admin_dashboard_displays_recent_activity(): void

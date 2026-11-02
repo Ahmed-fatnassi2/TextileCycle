@@ -6,18 +6,27 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreMaterialBatchRequest;
 use App\Http\Requests\UpdateMaterialBatchRequest;
 use App\Models\MaterialBatch;
+use App\Support\UpcyclingFilters;
+use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class MaterialBatchController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $materialBatches = MaterialBatch::withCount('upcycledProducts')
+        $filters = UpcyclingFilters::fromRequest($request);
+        $materialBatches = UpcyclingFilters::batches($filters)
+            ->withCount('upcycledProducts')
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
-        return view('admin.material-batches.index', compact('materialBatches'));
+        return view('admin.material-batches.index', [
+            'materialBatches' => $materialBatches,
+            'filters' => $filters,
+            ...UpcyclingFilters::options(),
+        ]);
     }
 
     public function create(): View

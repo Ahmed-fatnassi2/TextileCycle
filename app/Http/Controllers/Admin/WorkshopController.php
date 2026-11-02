@@ -34,7 +34,7 @@ class WorkshopController extends Controller
 
     private function availableOwners()
     {
-        return User::where('role', User::ROLE_WORKSHOP_OWNER)
+        return User::role(User::ROLE_WORKSHOP_OWNER)
             ->orderBy('name')
             ->get();
     }

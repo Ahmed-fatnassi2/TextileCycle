@@ -4,7 +4,11 @@
 @section('page_title', 'Gestion des produits upcyclés')
 
 @section('content')
-    <div class="mb-6 flex items-center justify-end">
+    <div class="mb-6 flex flex-wrap items-center justify-end gap-2">
+        <a href="{{ route('admin.upcycling.ideas') }}" class="rounded-lg bg-violet-700 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-800">✨ Idées de produits</a>
+        <a href="{{ route('admin.upcycling.report') }}" target="_blank" class="rounded-lg border bg-white px-4 py-2 text-sm hover:bg-gray-50">📄 Rapport PDF</a>
+        <a href="{{ route('admin.upcycling.export') }}" class="rounded-lg border bg-white px-4 py-2 text-sm hover:bg-gray-50">⬇ Exporter Excel</a>
+        <a href="{{ route('admin.upcycling.import', ['type' => 'produits']) }}" class="rounded-lg border bg-white px-4 py-2 text-sm hover:bg-gray-50">⬆ Importer</a>
         <a href="{{ route('admin.upcycled-products.create') }}" class="rounded-lg bg-emerald-600 px-4 py-2 text-sm text-white hover:bg-emerald-700">+ Nouveau produit</a>
     </div>
 

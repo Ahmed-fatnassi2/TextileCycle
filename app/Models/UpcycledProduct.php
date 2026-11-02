@@ -12,6 +12,7 @@ class UpcycledProduct extends Model
 
     protected $fillable = [
         'name',
+        'description',
         'price',
         'stock',
         'material_batch_id',

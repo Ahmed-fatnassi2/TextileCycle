@@ -32,8 +32,12 @@ class AssociationDonationTest extends TestCase
             'password_confirmation' => 'StrongPassword123',
         ]);
 
-        $response->assertRedirect(route('associations.create'));
+        // Inscription via Fortify : l'adresse doit d'abord être confirmée
+        $response->assertRedirect(route('verification.notice'));
         $user = User::where('email', 'samira@example.test')->firstOrFail();
+        $this->get(route('associations.create'))->assertRedirect(route('verification.notice'));
+        $user->markEmailAsVerified();
+        $this->actingAs($user->fresh()); // la session garde sinon l'utilisateur non vérifié en mémoire
 
         $this->post(route('associations.store'), [
             'name' => 'Main Tendue',
@@ -77,6 +81,10 @@ class AssociationDonationTest extends TestCase
 
         $this->actingAs($user)->post(route('association.donations.store'), [
             'quantity_items' => 42,
+            'category' => 'Enfants',
+            'description' => 'Pulls et manteaux pour enfants de 6 à 10 ans.',
+            'delivery_address' => '15 Rue de Marseille',
+            'delivery_city' => 'Tunis',
             'donation_date' => now()->addDay()->toDateString(),
             'association_id' => $otherAssociation->id,
             'status' => Donation::STATUS_DELIVERED,

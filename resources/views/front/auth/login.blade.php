@@ -11,6 +11,10 @@
         </div>
         <form method="POST" action="{{ route('login.store') }}" class="space-y-5 bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
             @csrf
+            {{-- Message après une réinitialisation de mot de passe réussie --}}
+            @if(session('status'))
+                <p class="border-l-2 border-emerald-600 bg-emerald-50 p-3 text-sm text-emerald-900">{{ session('status') }}</p>
+            @endif
             <div>
                 <label for="email" class="mb-1 block text-sm font-semibold text-slate-800">Adresse e-mail</label>
                 <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="email" class="w-full border border-slate-300 px-3 py-2.5 focus:border-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-800/15">
@@ -21,7 +25,10 @@
                 <input id="password" type="password" name="password" required autocomplete="current-password" class="w-full border border-slate-300 px-3 py-2.5 focus:border-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-800/15">
                 @error('password')<p class="mt-1 text-sm text-rose-700">{{ $message }}</p>@enderror
             </div>
-            <label class="flex items-center gap-2 text-sm text-slate-700"><input type="checkbox" name="remember" value="1" class="border-slate-300 text-emerald-800 focus:ring-emerald-700">Rester connecté</label>
+            <div class="flex flex-wrap items-center justify-between gap-2">
+                <label class="flex items-center gap-2 text-sm text-slate-700"><input type="checkbox" name="remember" value="1" class="border-slate-300 text-emerald-800 focus:ring-emerald-700">Rester connecté</label>
+                <a href="{{ route('password.request') }}" class="text-sm font-semibold text-emerald-900 underline underline-offset-4">Mot de passe oublié ?</a>
+            </div>
             <button class="min-h-12 w-full bg-emerald-900 px-5 font-semibold text-white transition hover:bg-emerald-800">Se connecter</button>
             <p class="text-center text-sm text-slate-600">Pas encore de compte ? <a class="font-semibold text-emerald-900 underline underline-offset-4" href="{{ route('register') }}">Créer un compte</a></p>
         </form>

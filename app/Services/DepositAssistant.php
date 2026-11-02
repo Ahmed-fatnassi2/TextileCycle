@@ -3,9 +3,6 @@
 namespace App\Services;
 
 use App\Exceptions\AssistantUnavailableException;
-use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 /**
  * Chatbot "assistant de dépôt" basé sur l'API OpenAI (Chat Completions + appel d'outils).
@@ -19,7 +16,7 @@ class DepositAssistant
     // Nombre maximal d'allers-retours modèle/outil pour une question
     private const MAX_ROUNDS = 4;
 
-    public function __construct(private DepositPointAdvisor $advisor)
+    public function __construct(private DepositPointAdvisor $advisor, private OpenAiClient $openAi)
     {
     }
 
@@ -30,15 +27,15 @@ class DepositAssistant
      */
     public function reply(array $history, ?array $position = null): array
     {
-        if (! config('services.openai.key')) {
-            throw new AssistantUnavailableException('OPENAI_API_KEY manquante.');
-        }
-
         $messages = [['role' => 'system', 'content' => $this->systemPrompt($position)], ...$history];
         $points = [];
 
         for ($round = 0; $round < self::MAX_ROUNDS; $round++) {
-            $message = $this->complete($messages);
+            $message = $this->openAi->chat([
+                'messages' => $messages,
+                'tools' => [$this->toolDefinition()],
+                'tool_choice' => 'auto',
+            ]);
             $toolCalls = $message['tool_calls'] ?? [];
 
             if (! $toolCalls) {
@@ -63,33 +60,6 @@ class DepositAssistant
         }
 
         throw new AssistantUnavailableException('Trop d’appels d’outils pour une seule question.');
-    }
-
-    private function complete(array $messages): array
-    {
-        try {
-            $response = Http::withToken(config('services.openai.key'))
-                ->baseUrl(config('services.openai.base_url'))
-                ->timeout(config('services.openai.timeout'))
-                ->acceptJson()
-                ->post('/chat/completions', [
-                    'model' => config('services.openai.model'),
-                    'messages' => $messages,
-                    'tools' => [$this->toolDefinition()],
-                    'tool_choice' => 'auto',
-                    'max_completion_tokens' => 2000,
-                ]);
-        } catch (ConnectionException $e) {
-            Log::warning('Assistant OpenAI injoignable', ['error' => $e->getMessage()]);
-            throw new AssistantUnavailableException('API OpenAI injoignable.', previous: $e);
-        }
-
-        if ($response->failed()) {
-            Log::warning('Erreur API OpenAI', ['status' => $response->status(), 'body' => $response->json('error')]);
-            throw new AssistantUnavailableException("Erreur API OpenAI ({$response->status()}).");
-        }
-
-        return $response->json('choices.0.message') ?? throw new AssistantUnavailableException('Réponse OpenAI vide.');
     }
 
     private function runTool(string $name, string $arguments, ?array $position): array

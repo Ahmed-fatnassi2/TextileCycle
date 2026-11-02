@@ -8,6 +8,7 @@
             <p class="text-sm font-semibold uppercase tracking-wide text-emerald-800">Transformation & upcycling</p>
             <h1 class="mt-3 max-w-3xl font-display text-4xl leading-tight text-slate-950 sm:text-5xl">Le textile récupéré devient une nouvelle création.</h1>
             <p class="mt-4 max-w-2xl leading-7 text-slate-600">Parcourez les produits fabriqués à partir de matières textiles récupérées. Chaque fiche indique sa matière d’origine et son stock.</p>
+            <a href="{{ route('products.ideas') }}" class="mt-6 inline-flex min-h-11 items-center gap-2 bg-violet-700 px-5 font-semibold text-white transition hover:bg-violet-800">✨ Que créer avec ma matière ?</a>
         </div>
     </section>
 
