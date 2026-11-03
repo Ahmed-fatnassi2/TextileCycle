@@ -12,7 +12,7 @@ class StoreRepairRequestRequest extends FormRequest
 
     public function rules(): array
     {
-        $rules = ['item_description' => 'required|string|min:5|max:1000', 'problem_type' => ['required', Rule::in(RepairRequest::problemTypes())], 'workshop_id' => 'required|exists:workshops,id', 'photos' => 'nullable|array|max:3', 'photos.*' => 'image|mimes:jpg,jpeg,png,webp|max:4096'];
+        $rules = ['item_description' => 'required|string|min:5|max:1000', 'problem_type' => ['required', Rule::in(RepairRequest::problemTypes())], 'item_category' => ['nullable', Rule::in(['haut','pantalon','robe','veste','linge_maison','autre'])], 'workshop_id' => 'required|exists:workshops,id', 'photos' => 'nullable|array|max:3', 'photos.*' => 'image|mimes:jpg,jpeg,png,webp|max:4096'];
         if ($this->routeIs('admin.*')) { $rules += ['user_id' => 'required|exists:users,id', 'cost' => 'required|numeric|min:0|max:100000', 'estimated_cost' => 'nullable|numeric|min:0|max:100000', 'estimated_completion_date' => 'nullable|date|after_or_equal:today', 'status' => ['required', Rule::in(RepairRequest::statuses())], 'after_photos' => 'nullable|array|max:3', 'after_photos.*' => 'image|mimes:jpg,jpeg,png,webp|max:4096']; }
         return $rules;
     }

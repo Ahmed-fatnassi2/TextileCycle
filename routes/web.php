@@ -20,11 +20,14 @@ use App\Http\Controllers\AssociationRequestController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RepairController;
+use App\Http\Controllers\RepairPhotoController;
 use App\Http\Controllers\UpcycledProductCatalogController;
 use App\Http\Controllers\UpcyclingIdeasController;
 use App\Http\Controllers\WorkshopController;
 use App\Http\Controllers\WorkshopOwner\RepairRequestController as WorkshopOwnerRepairRequestController;
 use App\Models\UpcycledProduct;
+use App\Models\UserActivity;
+use App\Models\AiUsageEvent;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 
@@ -60,6 +63,7 @@ Route::get('/produits-upcycles/{upcycledProduct}', [UpcycledProductCatalogContro
 Route::post('/assistant/chat', [AssistantController::class, 'chat'])
     ->middleware('throttle:15,1')
     ->name('assistant.chat');
+Route::post('/repairs/assistant/chat', [AssistantController::class, 'repairChat'])->middleware('throttle:10,1')->name('repairs.assistant.chat');
 
 Route::get('/deposits', [DepositController::class, 'index'])->name('deposits.index');
 Route::get('/workshops', [WorkshopController::class, 'index'])->name('workshops.index');
@@ -81,8 +85,11 @@ Route::middleware(['auth', 'verified', 'permission:repairs.request'])->group(fun
     Route::get('/repairs/create', [RepairController::class, 'create'])->name('repairs.create');
     Route::post('/repairs', [RepairController::class, 'store'])->name('repairs.store');
     Route::get('/repairs/{repairRequest}', [RepairController::class, 'show'])->name('repairs.show');
+    Route::get('/repairs/{repairRequest}/certificate', [RepairController::class, 'certificate'])->name('repairs.certificate');
     Route::post('/repairs/{repairRequest}/quote', [RepairController::class, 'respondToQuote'])->name('repairs.quote');
     Route::post('/repairs/{repairRequest}/pickup', [RepairController::class, 'confirmPickup'])->name('repairs.pickup');
+    Route::post('/repairs/{repairRequest}/alternatives', [RepairController::class, 'alternatives'])->middleware('throttle:10,1')->name('repairs.alternatives');
+    Route::get('/repairs/{repairRequest}/photos/{photo}', [RepairPhotoController::class, 'citizen'])->name('repairs.photos.show');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -109,12 +116,44 @@ Route::prefix('atelier')->name('workshop-owner.')->middleware(['auth', 'verified
     Route::get('/reparations/{repairRequest}', [WorkshopOwnerRepairRequestController::class, 'show'])->name('repairs.show');
     Route::put('/reparations/{repairRequest}/devis', [WorkshopOwnerRepairRequestController::class, 'quote'])->name('repairs.quote');
     Route::patch('/reparations/{repairRequest}/statut', [WorkshopOwnerRepairRequestController::class, 'updateStatus'])->name('repairs.status');
+    Route::patch('/reparations/{repairRequest}/date-estimee', [WorkshopOwnerRepairRequestController::class, 'updateEstimatedDate'])->name('repairs.estimate');
+    Route::post('/reparations/{repairRequest}/message/draft', [WorkshopOwnerRepairRequestController::class, 'messageDraft'])->middleware('throttle:10,1')->name('repairs.message.draft');
+    Route::post('/reparations/{repairRequest}/message', [WorkshopOwnerRepairRequestController::class, 'sendMessage'])->name('repairs.message');
+    Route::get('/reparations/{repairRequest}/photos/{photo}', [RepairPhotoController::class, 'workshopOwner'])->name('repairs.photos.show');
+    Route::post('/reparations/{repairRequest}/quality/analyze', [WorkshopOwnerRepairRequestController::class, 'analyzeQuality'])->middleware('throttle:5,1')->name('repairs.quality.analyze');
+    Route::put('/reparations/{repairRequest}/quality', [WorkshopOwnerRepairRequestController::class, 'saveQuality'])->name('repairs.quality.save');
 });
 
 // ---------- BACK OFFICE : chaque module exige sa propre permission ----------
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'permission:admin.access'])->group(function () {
     Route::get('/', function () {
-        return view('admin.dashboard');
+        $recentActivities = UserActivity::with(['user', 'actor'])->latest()->take(5)->get();
+        $recentDeposits = \App\Models\Deposit::with(['user', 'depositPoint'])->latest('deposit_date')->take(5)->get();
+        $aiUsageToday = AiUsageEvent::query()
+            ->whereIn('feature', ['repair_assistant', 'repair_message', 'repair_alternatives', 'repair_quality'])
+            ->whereDate('created_at', today())
+            ->selectRaw('feature, count(*) as calls, sum(input_tokens) as input_tokens, sum(output_tokens) as output_tokens')
+            ->groupBy('feature')
+            ->orderByDesc('calls')
+            ->get();
+        $aiUsageByDay = AiUsageEvent::query()
+            ->whereIn('feature', ['repair_assistant', 'repair_message', 'repair_alternatives', 'repair_quality'])
+            ->where('created_at', '>=', now()->subDays(6)->startOfDay())
+            ->selectRaw('DATE(created_at) as day, count(*) as calls')
+            ->groupByRaw('DATE(created_at)')
+            ->orderBy('day')
+            ->get()
+            ->keyBy('day');
+        $aiUsageDays = collect(range(6, 0))->map(function (int $daysAgo) use ($aiUsageByDay) {
+            $day = today()->subDays($daysAgo);
+
+            return ['label' => $day->format('d/m'), 'calls' => (int) ($aiUsageByDay[$day->toDateString()]->calls ?? 0)];
+        });
+        $aiUsageTotalToday = (int) $aiUsageToday->sum('calls');
+        $aiUsageInputTokensToday = (int) $aiUsageToday->sum('input_tokens');
+        $aiUsageOutputTokensToday = (int) $aiUsageToday->sum('output_tokens');
+
+        return view('admin.dashboard', compact('recentActivities', 'recentDeposits', 'aiUsageToday', 'aiUsageDays', 'aiUsageTotalToday', 'aiUsageInputTokensToday', 'aiUsageOutputTokensToday'));
     })->name('dashboard');
 
     // Collecte : points, dépôts, validation par QR code
@@ -132,6 +171,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'permiss
 
     // Réparation : ateliers et demandes
     Route::middleware('permission:repairs.manage')->group(function () {
+        Route::get('repair-requests/{repairRequest}/photos/{photo}', [RepairPhotoController::class, 'admin'])->name('repair-requests.photos.show');
         Route::resource('workshops', AdminWorkshopController::class);
         Route::resource('repair-requests', AdminRepairRequestController::class);
     });

@@ -1,13 +1,13 @@
 {{-- Chatbot "assistant de dépôt" : bouton flottant + panneau de discussion (logique dans resources/js/chat-assistant.js) --}}
-<div data-assistant data-endpoint="{{ route('assistant.chat') }}" class="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-3 print:hidden">
+<div data-assistant data-endpoint="{{ $endpoint ?? route('assistant.chat') }}" data-title="{{ $title ?? 'Assistant de dépôt' }}" data-welcome="{{ $welcome ?? 'Je vous aide à choisir le meilleur point de collecte.' }}" class="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-3 print:hidden">
 
     <section data-assistant-panel hidden
              class="flex h-[32rem] max-h-[calc(100vh-6rem)] w-[calc(100vw-2rem)] max-w-sm flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
              aria-label="Assistant de dépôt">
         <header class="flex items-center justify-between bg-emerald-900 px-4 py-3 text-white">
             <div>
-                <p class="font-semibold">Assistant de dépôt</p>
-                <p class="text-xs text-emerald-100">Je vous aide à choisir le meilleur point de collecte</p>
+                <p class="font-semibold">{{ $title ?? 'Assistant de dépôt' }}</p>
+                <p class="text-xs text-emerald-100">{{ $welcome ?? 'Je vous aide à choisir le meilleur point de collecte' }}</p>
             </div>
             <div class="flex items-center gap-1">
                 <button type="button" data-assistant-reset class="rounded px-2 py-1 text-xs text-emerald-100 hover:bg-white/10" title="Nouvelle conversation">↺</button>
@@ -36,8 +36,8 @@
         </form>
     </section>
 
-    <button type="button" data-assistant-toggle
+        <button type="button" data-assistant-toggle
             class="flex items-center gap-2 rounded-full bg-emerald-900 px-5 py-3 font-semibold text-white shadow-lg transition hover:bg-emerald-800">
-        <span aria-hidden="true">💬</span> Où déposer ?
+        <span aria-hidden="true">💬</span> {{ $title ?? 'Où déposer ?' }}
     </button>
 </div>

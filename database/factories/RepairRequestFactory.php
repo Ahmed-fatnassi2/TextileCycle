@@ -24,6 +24,7 @@ class RepairRequestFactory extends Factory
             'user_id' => User::factory(),
             'item_description' => $items[$problem],
             'problem_type' => $problem,
+            'item_category' => match ($problem) { RepairRequest::PROBLEM_HEM => 'pantalon', RepairRequest::PROBLEM_ZIPPER => 'veste', default => 'haut' },
             'cost' => fake()->randomFloat(2, 0, 80),
             'estimated_cost' => in_array($status, [RepairRequest::STATUS_QUOTE_PROPOSED, RepairRequest::STATUS_QUOTE_ACCEPTED, RepairRequest::STATUS_IN_PROGRESS, RepairRequest::STATUS_READY_FOR_PICKUP, RepairRequest::STATUS_REPAIRED, RepairRequest::STATUS_COLLECTED], true) ? fake()->randomFloat(2, 15, 80) : null,
             'estimated_completion_date' => fake()->dateTimeBetween('+2 days', '+3 weeks'),

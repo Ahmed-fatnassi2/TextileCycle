@@ -4,9 +4,10 @@
 const root = document.querySelector('[data-assistant]');
 
 if (root) {
-    const STORAGE_KEY = 'textilecycle.assistant';
+    const isRepairAssistant = root.dataset.endpoint.includes('/repairs/assistant/chat');
+    const STORAGE_KEY = isRepairAssistant ? 'textilecycle.repair-assistant' : 'textilecycle.assistant';
     const MAX_HISTORY = 12; // doit correspondre à la validation côté serveur
-    const WELCOME = 'Bonjour ! Dites-moi où vous êtes (ou partagez votre position) et combien de vêtements vous avez : je vous indique le meilleur point de collecte.';
+    const WELCOME = root.dataset.welcome || 'Bonjour ! Dites-moi où vous êtes : je vous aide.';
 
     const panel = root.querySelector('[data-assistant-panel]');
     const list = root.querySelector('[data-assistant-messages]');
@@ -16,6 +17,7 @@ if (root) {
     const suggestions = root.querySelector('[data-assistant-suggestions]');
     const locateButton = root.querySelector('[data-assistant-locate]');
     const locationStatus = root.querySelector('[data-assistant-location-status]');
+    if (isRepairAssistant) { suggestions.hidden = true; locateButton.hidden = true; locationStatus.hidden = true; }
 
     const state = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || 'null') ?? { open: false, messages: [], position: null };
     const save = () => sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -78,7 +80,7 @@ if (root) {
             bubble(m.role, m.content);
             if (m.points?.length) pointCards(m.points);
         });
-        suggestions.hidden = state.messages.length > 0;
+        suggestions.hidden = isRepairAssistant || state.messages.length > 0;
         locationStatus.textContent = state.position ? ' ✓ position partagée' : '';
         list.scrollTop = list.scrollHeight;
     };
