@@ -7,8 +7,15 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "arquivei/laravel-prometheus-exporter": "^6.0",
+        "bacon/bacon-qr-code": "^3.0",
+        "barryvdh/laravel-dompdf": "^3.1",
+        "laravel/fortify": "^1.41",
         "laravel/framework": "^12.0",
-        "laravel/tinker": "^2.10.1"
+        "laravel/octane": "^2.22",
+        "laravel/tinker": "^2.10.1",
+        "maatwebsite/excel": "^3.1",
+        "spatie/laravel-permission": "^6.25"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

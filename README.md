@@ -18,6 +18,16 @@ Un membre connecté peut soumettre une demande d’association à `/association/
 
 Les routes du back office nécessitent un compte dont le rôle est `admin`. Les migrations ajoutent ce rôle et les tables `associations` et `donations`.
 
+## Gestion des utilisateurs
+
+- **Authentification : Laravel Fortify** (`config/fortify.php`, `app/Providers/FortifyServiceProvider.php`). Pages Blade du site : `/connexion`, `/inscription`, `/mot-de-passe-oublie`. 5 tentatives de connexion par minute.
+- **Mot de passe oublié** : lien envoyé par e-mail, jeton à usage unique qui expire après 60 minutes (`config/auth.php`).
+- **Vérification d'e-mail** : `User implements MustVerifyEmail`. Les espaces citoyen, atelier et admin exigent le middleware `verified`.
+- **Rôles et permissions : Spatie Permission**. Rôles `admin`, `workshop_owner`, `user`. Les routes sont protégées par permission (`permission:deposits.manage`…), et la matrice se règle dans Admin → Rôles et permissions (`app/Support/Permissions.php`).
+- **Double authentification (TOTP)** : depuis « Mon profil » (après confirmation du mot de passe). QR code, clé manuelle, 8 codes de récupération.
+- **Profil** : nom, e-mail, mot de passe, photo de profil, suppression du compte (le dernier administrateur ne peut pas supprimer le sien).
+- E-mails envoyés via la configuration `MAIL_*` du `.env`. En local, `MAIL_MAILER=log` les écrit dans `storage/logs/laravel.log`.
+
 ## About Laravel
 
 <p align="center">

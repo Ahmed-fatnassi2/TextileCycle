@@ -4,8 +4,34 @@
 @section('page_title', 'Gestion des lots de matière')
 
 @section('content')
-    <div class="mb-6 flex items-center justify-end">
-        <a href="{{ route('admin.material-batches.create') }}" class="rounded-lg bg-emerald-600 px-4 py-2 text-sm text-white hover:bg-emerald-700">+ Nouveau lot</a>
+    <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+        {{-- Les filtres s'appliquent aussi à l'export Excel et au rapport PDF --}}
+        <form method="GET" class="flex flex-wrap gap-3">
+            <select name="material_type" class="rounded-lg border px-3 py-2 text-sm">
+                <option value="">Toutes les matières</option>
+                @foreach($materialTypes as $type)
+                    <option value="{{ $type }}" @selected(($filters['material_type'] ?? '') === $type)>{{ $type }}</option>
+                @endforeach
+            </select>
+            <select name="quality_grade" class="rounded-lg border px-3 py-2 text-sm">
+                <option value="">Toutes qualités</option>
+                @foreach($qualityGrades as $grade)
+                    <option value="{{ $grade }}" @selected(($filters['quality_grade'] ?? '') === $grade)>Qualité {{ $grade }}</option>
+                @endforeach
+            </select>
+            <button class="rounded-lg bg-gray-800 px-4 py-2 text-sm text-white hover:bg-gray-700">Filtrer</button>
+            @if($filters)
+                <a href="{{ route('admin.material-batches.index') }}" class="self-center text-sm text-gray-500 hover:underline">Effacer</a>
+            @endif
+        </form>
+
+        <div class="flex flex-wrap gap-2">
+            <a href="{{ route('admin.upcycling.ideas') }}" class="rounded-lg bg-violet-700 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-800">✨ Idées de produits</a>
+            <a href="{{ route('admin.upcycling.report', $filters) }}" target="_blank" class="rounded-lg border bg-white px-4 py-2 text-sm hover:bg-gray-50">📄 Rapport PDF</a>
+            <a href="{{ route('admin.upcycling.export', $filters) }}" class="rounded-lg border bg-white px-4 py-2 text-sm hover:bg-gray-50">⬇ Exporter Excel</a>
+            <a href="{{ route('admin.upcycling.import', ['type' => 'lots']) }}" class="rounded-lg border bg-white px-4 py-2 text-sm hover:bg-gray-50">⬆ Importer</a>
+            <a href="{{ route('admin.material-batches.create') }}" class="rounded-lg bg-emerald-600 px-4 py-2 text-sm text-white hover:bg-emerald-700">+ Nouveau lot</a>
+        </div>
     </div>
 
     <div class="overflow-hidden rounded-xl bg-white shadow">

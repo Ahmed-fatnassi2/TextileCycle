@@ -23,6 +23,9 @@
                 <p class="mt-3 text-sm {{ $upcycledProduct->stock > 0 ? 'text-emerald-800' : 'text-slate-500' }}">
                     {{ $upcycledProduct->stock > 0 ? 'Disponible · '.$upcycledProduct->stock.' en stock' : 'Actuellement épuisé' }}
                 </p>
+                @if($upcycledProduct->description)
+                    <p class="mt-6 leading-7 text-slate-700">{{ $upcycledProduct->description }}</p>
+                @endif
                 <div class="mt-8 border-t border-slate-200 pt-5">
                     <h3 class="font-semibold text-slate-900">Matière & origine</h3>
                     <p class="mt-2 leading-7 text-slate-600">Ce produit est associé à un lot de {{ $upcycledProduct->materialBatch->weight }} kg de {{ strtolower($upcycledProduct->materialBatch->material_type) }}, classé qualité {{ $upcycledProduct->materialBatch->quality_grade }}.</p>
