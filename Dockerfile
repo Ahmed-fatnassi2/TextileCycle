@@ -10,25 +10,10 @@ COPY . .
 RUN npm run build
 
 # =========================================================
-# Stage 2: Composer dependencies
+# Stage 2: Shared PHP runtime extensions
 # =========================================================
-FROM composer:2 AS vendor
+FROM dunglas/frankenphp:php8.2 AS runtime-base
 
-WORKDIR /app
-COPY composer.json composer.lock ./
-RUN composer install \
-    --no-dev \
-    --no-interaction \
-    --no-scripts \
-    --prefer-dist \
-    --optimize-autoloader
-
-# =========================================================
-# Stage 3: Runtime — FrankenPHP + Laravel Octane
-# =========================================================
-FROM dunglas/frankenphp:php8.2
-
-# System + PHP extensions Laravel needs
 RUN install-php-extensions \
         pdo \
         pdo_mysql \
@@ -40,6 +25,28 @@ RUN install-php-extensions \
         bcmath \
         opcache \
         pcntl
+
+# =========================================================
+# Stage 3: Composer dependencies on the same PHP platform
+# =========================================================
+FROM composer:2 AS composer-bin
+
+FROM runtime-base AS vendor
+
+WORKDIR /app
+COPY --from=composer-bin /usr/bin/composer /usr/bin/composer
+COPY composer.json composer.lock ./
+RUN composer install \
+    --no-dev \
+    --no-interaction \
+    --no-scripts \
+    --prefer-dist \
+    --optimize-autoloader
+
+# =========================================================
+# Stage 4: Runtime — FrankenPHP + Laravel Octane
+# =========================================================
+FROM runtime-base AS runtime
 
 WORKDIR /var/www/html
 
