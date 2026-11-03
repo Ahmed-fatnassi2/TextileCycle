@@ -84,6 +84,37 @@ In order to ensure that the Laravel community is welcoming to all, please review
 
 If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
+## Fonctionnalités IA du module Réparation
+
+Le module peut proposer un assistant de réparation et des brouillons de message. Configurez `OPENAI_API_KEY` et `OPENAI_MODEL` dans le `.env` local pour activer les réponses IA ; ne placez jamais la clé dans `.env.example` ni dans Git. `AI_REPAIR_ENABLED=false` désactive les appels ; les messages d’atelier utilisent alors leurs modèles automatiques. Les quotas par défaut sont de 20 questions, 30 messages, 10 conseils et 10 contrôles qualité par jour et par compte ou adresse IP, avec un plafond partagé de 300 appels quotidiens. Les réponses sont mises en cache pour limiter les appels. Les tableaux de bord administrateur et atelier affichent les appels API réels et les jetons utilisés ; aucun prompt ni contenu client n’est conservé. `AI_REPAIR_UPCYCLE_COST_THRESHOLD` règle le seuil d’affichage des alternatives (80 TND) et `REPAIR_REPLACEMENT_SHARE` règle la part indicative de l’impact évité (0,5). Exécutez `php artisan migrate` après mise à jour.
+
+Le tableau de bord atelier présente aussi des indicateurs de délai, de durée moyenne et d’avis qualité automatique sur 30 jours. Une fois la réparation terminée et son impact calculé, le citoyen peut consulter et imprimer un certificat récapitulatif ; les chiffres environnementaux restent des estimations indicatives.
+
+### Comptes de démonstration
+
+Après `php artisan migrate --seed`, les comptes suivants utilisent tous le mot de passe `DemoTunisie2026!` :
+
+| Espace | Adresse e-mail |
+| --- | --- |
+| Administration | `admin@textilecycle.test` |
+| Citoyen principal | `citoyen@textilecycle.test` |
+| Deuxième citoyenne (vérifier la confidentialité) | `citoyenne2@textilecycle.test` |
+| Propriétaire d’atelier | `atelier@textilecycle.test` |
+| Partenaire associatif | `partenaire.tunis@textilecycle.test` |
+
+Le partenaire associatif utilise le rôle citoyen et un profil association, conformément aux rôles actuellement disponibles dans l’application.
+
+Le seeder ajoute l’atelier **Atelier Démo AI Tunis**, une demande en attente, un devis élevé à 125 TND pour tester les alternatives, des demandes actives avec des échéances différentes, un dossier prêt au retrait avec impact et avis qualité enregistrés, ainsi que trois réparations clôturées pour alimenter l’estimation historique des tarifs. Pour montrer l’analyse visuelle en direct, créez une demande avec une photo Avant, démarrez-la depuis l’espace atelier, puis ajoutez une photo Après avant l’analyse.
+
+### Démonstration du risque et des alternatives
+
+- Connectez-vous avec `atelier@textilecycle.test`, ouvrez `/atelier` et regardez la carte **Réparations à surveiller**. Le dossier **Manteau avec une couture ouverte** est en risque élevé car sa date estimée est dépassée.
+- Ouvrez ce dossier et modifiez **Ajuster la date estimée pour recalculer le risque**. Enregistrez une date dans le futur : le badge passe de risque élevé à risque modéré, car la charge ouverte de l’atelier reste prise en compte. Le même badge et sa raison apparaissent dans `/atelier/reparations`.
+- Déconnectez-vous, puis connectez-vous avec `citoyen@textilecycle.test` et ouvrez `/repairs`. Le panneau **Devis élevé** en haut de page mène à la veste avec un devis de **125 TND** (seuil par défaut : 80 TND).
+- Ouvrez la demande pour voir les trois options Réparer, Upcycler et Donner. **Voir les alternatives avec l’assistant** demande une formulation IA. Si l’API n’a pas de crédit, le mode automatique garde les options accessibles et l’interface l’indique.
+
+Ces identifiants sont réservés au développement et à la démonstration : ne les utilisez pas en production.
+
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

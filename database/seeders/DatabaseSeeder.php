@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             RepairSeeder::class,
             AssociationSeeder::class,
             TunisiaDemoSeeder::class,
+            RepairAiDemoSeeder::class,
             UpcyclingSeeder::class,
         ]);
 

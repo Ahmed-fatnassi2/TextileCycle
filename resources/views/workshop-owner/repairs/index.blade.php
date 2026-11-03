@@ -23,7 +23,13 @@
             @forelse($repairRequests as $repairRequest)
                 <a href="{{ route('workshop-owner.repairs.show', $repairRequest) }}" class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 px-5 py-4 last:border-0 hover:bg-slate-50">
                     <span><span class="block font-medium">{{ $repairRequest->item_description }}</span><span class="mt-1 block text-sm text-slate-500">{{ $repairRequest->user?->name }} · {{ $repairRequest->problem_type }} · {{ $repairRequest->created_at->format('d/m/Y') }}</span></span>
-                    <span class="text-sm font-semibold text-emerald-800">{{ $repairRequest->status }}</span>
+                    <span class="flex flex-col items-start gap-1 sm:items-end"><span class="text-sm font-semibold text-slate-700">{{ $repairRequest->status }}</span>
+                        @if(isset($delayRisks[$repairRequest->id]))
+                            @php($riskInfo = $delayRisks[$repairRequest->id])
+                            <span class="rounded-full px-3 py-1 text-xs font-bold {{ $riskInfo['risk'] === 'high' ? 'bg-rose-100 text-rose-900 ring-1 ring-rose-300' : ($riskInfo['risk'] === 'medium' ? 'bg-orange-100 text-orange-900 ring-1 ring-orange-300' : 'bg-emerald-100 text-emerald-900 ring-1 ring-emerald-300') }}">{{ $riskInfo['risk'] === 'high' ? '🔴 Risque élevé' : ($riskInfo['risk'] === 'medium' ? '🟠 Risque modéré' : '🟢 Risque faible') }}</span>
+                            <span class="text-xs text-slate-600">{{ $riskInfo['reason'] }}</span>
+                        @endif
+                    </span>
                 </a>
             @empty
                 <p class="px-5 py-8 text-sm text-slate-500">Aucune demande ne correspond à ces critères.</p>

@@ -18,6 +18,7 @@
 @endphp
 
 @section('content')
+    <section class="mx-auto mb-6 max-w-5xl rounded-xl border border-emerald-200 bg-emerald-50 p-5"><h2 class="font-semibold">Impact indicatif de vos réparations</h2><p class="mt-2 text-sm">{{ (int) ($repairImpact->repairs ?? 0) }} réparations · {{ number_format((float) ($repairImpact->co2 ?? 0), 1) }} kg CO₂e et {{ number_format((float) ($repairImpact->waste ?? 0), 1) }} kg de textile évités (estimations indicatives).</p></section>
     <section class="mx-auto max-w-3xl space-y-6 px-4 py-12">
         <div>
             <p class="text-sm font-semibold uppercase tracking-wide text-emerald-800">Mon compte</p>

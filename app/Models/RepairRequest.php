@@ -22,9 +22,9 @@ class RepairRequest extends Model
     public const STATUS_REPAIRED = 'Réparé';
     public const STATUS_COLLECTED = 'Récupéré';
 
-    protected $fillable = ['user_id', 'item_description', 'problem_type', 'cost', 'estimated_cost', 'estimated_completion_date', 'status', 'workshop_id'];
+    protected $fillable = ['user_id', 'item_description', 'problem_type', 'cost', 'estimated_cost', 'estimated_completion_date', 'status', 'workshop_id', 'item_category', 'co2_saved_kg', 'waste_saved_kg', 'started_at', 'ready_at', 'quality_score', 'quality_note', 'quality_checked_at'];
 
-    protected $casts = ['cost' => 'decimal:2', 'estimated_cost' => 'decimal:2', 'estimated_completion_date' => 'date'];
+    protected $casts = ['cost' => 'decimal:2', 'estimated_cost' => 'decimal:2', 'estimated_completion_date' => 'date', 'started_at' => 'datetime', 'ready_at' => 'datetime', 'quality_checked_at' => 'datetime', 'co2_saved_kg' => 'decimal:2', 'waste_saved_kg' => 'decimal:2'];
 
     public static function problemTypes(): array
     {

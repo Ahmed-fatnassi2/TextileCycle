@@ -38,7 +38,11 @@
     @include('partials.front.footer')
 
     {{-- Chatbot assistant de dépôt --}}
-    @include('partials.front.assistant')
+    @if(request()->routeIs('repairs.*', 'workshops.*'))
+        @include('partials.front.assistant', ['endpoint' => route('repairs.assistant.chat'), 'title' => 'Assistant réparation', 'welcome' => 'Décrivez votre vêtement ou demandez des informations sur vos réparations.'])
+    @else
+        @include('partials.front.assistant')
+    @endif
     @vite('resources/js/chat-assistant.js')
 
     @stack('scripts')

@@ -5,6 +5,35 @@
 
 @section('content')
 
+    @php($usagePercent = min(100, (int) round($aiUsageTotalToday / max(1, (int) config('ai.global_daily_limit')) * 100)))
+    <section class="mb-8 rounded-xl border border-violet-200 bg-white p-5 shadow-sm" aria-labelledby="repair-ai-usage-title">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+            <div><p class="text-xs font-bold uppercase tracking-wider text-violet-800">Suivi des appels réels · 7 derniers jours</p><h2 id="repair-ai-usage-title" class="mt-1 text-xl font-bold text-slate-900">Usage IA du module Réparation</h2><p class="mt-1 text-sm text-slate-600">Seuls les appels envoyés à OpenAI sont comptés : ni cache ni mode automatique.</p></div>
+            <div class="rounded-lg bg-violet-50 px-4 py-3 text-right"><p class="text-sm text-violet-900">Aujourd’hui</p><p class="text-2xl font-black text-violet-950">{{ $aiUsageTotalToday }} <span class="text-sm font-semibold">/ {{ (int) config('ai.global_daily_limit') }} appels</span></p></div>
+        </div>
+        <div class="mt-4 h-2 overflow-hidden rounded-full bg-slate-100" role="progressbar" aria-label="Utilisation quotidienne du quota IA" aria-valuenow="{{ min($aiUsageTotalToday, (int) config('ai.global_daily_limit')) }}" aria-valuemin="0" aria-valuemax="{{ (int) config('ai.global_daily_limit') }}"><div class="h-full rounded-full bg-violet-600" style="width: {{ $usagePercent }}%"></div></div>
+        <div class="mt-5 grid gap-5 lg:grid-cols-[1fr_1.2fr]">
+            <div><h3 class="text-sm font-bold text-slate-800">Activité quotidienne</h3><div class="mt-3 flex h-28 items-end gap-2" role="img" aria-label="Graphique des appels IA par jour sur sept jours">
+                @foreach($aiUsageDays as $day)
+                    @php($barHeight = $day['calls'] ? max(8, (int) round($day['calls'] / max(1, $aiUsageDays->max('calls')) * 100)) : 3)
+                    <div class="flex h-full flex-1 flex-col items-center justify-end gap-1"><span class="text-[10px] font-semibold text-slate-600">{{ $day['calls'] ?: '' }}</span><div class="w-full rounded-t bg-violet-500" style="height: {{ $barHeight }}%"></div><span class="text-[10px] text-slate-500">{{ $day['label'] }}</span></div>
+                @endforeach
+            </div></div>
+            <div><h3 class="text-sm font-bold text-slate-800">Répartition et jetons · aujourd’hui</h3><ul class="mt-2 divide-y divide-slate-100">
+                @forelse($aiUsageToday as $usage)
+                    <li class="flex flex-wrap justify-between gap-2 py-2 text-sm"><span class="font-medium text-slate-700">{{ ['repair_assistant' => 'Assistant réparation', 'repair_message' => 'Messages atelier', 'repair_alternatives' => 'Conseils réparation / réemploi', 'repair_quality' => 'Analyse qualité'][$usage->feature] ?? $usage->feature }}</span><span class="text-slate-600">{{ (int) $usage->calls }} appel(s) · {{ (int) ($usage->input_tokens ?? 0) + (int) ($usage->output_tokens ?? 0) }} jeton(s)</span></li>
+                @empty
+                    <li class="py-2 text-sm text-slate-500">Aucun appel IA du module Réparation aujourd’hui.</li>
+                @endforelse
+            </ul></div>
+        </div>
+        <p class="mt-3 text-xs text-slate-500">Total aujourd’hui : {{ $aiUsageInputTokensToday }} jetons en entrée et {{ $aiUsageOutputTokensToday }} en sortie. Le suivi conserve uniquement fonctionnalité, statut et volumes de jetons, jamais les prompts.</p>
+    </section>
+
+    @php($repairImpact = \App\Models\RepairRequest::whereNotNull('co2_saved_kg')->selectRaw('count(*) as repairs, sum(co2_saved_kg) as co2, sum(waste_saved_kg) as waste')->first())
+    @php($impactByCategory = \App\Models\RepairRequest::whereNotNull('co2_saved_kg')->selectRaw('item_category, count(*) as repairs, sum(co2_saved_kg) as co2, sum(waste_saved_kg) as waste')->groupBy('item_category')->get())
+    <section class="mb-8 rounded-xl border border-emerald-200 bg-emerald-50 p-5"><h2 class="font-semibold">Impact indicatif des réparations</h2><p class="mt-2">{{ (int) ($repairImpact->repairs ?? 0) }} réparations · {{ number_format((float) ($repairImpact->co2 ?? 0), 1) }} kg CO₂e · {{ number_format((float) ($repairImpact->waste ?? 0), 1) }} kg de textile évités.</p><ul class="mt-2 flex flex-wrap gap-x-5 text-sm">@foreach($impactByCategory as $row)<li>{{ $row->item_category }} : {{ $row->repairs }} · {{ number_format((float) $row->co2, 1) }} kg CO₂e</li>@endforeach</ul><p class="mt-1 text-xs">Estimations indicatives.</p></section>
+
     {{-- Cartes statistiques --}}
     <div class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
 
@@ -84,13 +113,6 @@
         </a>
     </div>
 
-    @php
-        $recentActivities = \App\Models\UserActivity::with(['user', 'actor'])
-            ->latest()
-            ->take(5)
-            ->get();
-    @endphp
-
     <div class="mb-8 rounded-xl bg-white p-6 shadow">
         <div class="mb-4 flex items-center justify-between">
             <h2 class="text-lg font-bold">Activité récente</h2>
@@ -143,13 +165,6 @@
             <a href="{{ route('admin.deposits.index') }}"
                class="text-sm text-emerald-600 hover:underline">Voir tout →</a>
         </div>
-
-        @php
-            $recentDeposits = \App\Models\Deposit::with(['user', 'depositPoint'])
-                ->latest('deposit_date')
-                ->take(5)
-                ->get();
-        @endphp
 
         <table class="w-full text-sm">
             <thead class="bg-gray-50 text-gray-600">

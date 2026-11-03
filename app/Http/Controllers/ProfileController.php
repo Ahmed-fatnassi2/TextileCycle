@@ -20,9 +20,11 @@ class ProfileController extends Controller
     {
         $user = $request->user();
         $securityUnlocked = $this->passwordRecentlyConfirmed($request);
+        $repairImpact = $user->repairRequests()->selectRaw('count(*) as repairs, sum(co2_saved_kg) as co2, sum(waste_saved_kg) as waste')->first();
 
         return view('front.profile.edit', [
             'user' => $user,
+            'repairImpact' => $repairImpact,
             'securityUnlocked' => $securityUnlocked,
             'qrCodeSvg' => $securityUnlocked && $user->two_factor_secret ? $user->twoFactorQrCodeSvg() : null,
             'secretKey' => $securityUnlocked && $user->two_factor_secret ? decrypt($user->two_factor_secret) : null,
